@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2CB2D7DD-DD8D-47FA-B77E-1CB7B93B6C39}") = "Wizard-2020", "Wizard-2020.vcxproj", "{D60D679D-9B4D-42A3-945C-B01663CF87AB}"
+Project("{2CB2D7DD-DD8D-47FA-B77E-1CB7B93B6C39}") = "WindowsHookEx", "WindowsHookEx.vcxproj", "{D60D679D-9B4D-42A3-945C-B01663CF87AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

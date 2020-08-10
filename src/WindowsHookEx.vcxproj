@@ -130,6 +130,11 @@
     <Manifest Include="Compatibility.manifest" />
     <Manifest Include="PerMonitorV2.manifest" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="HookDll\HookDll.vcxproj">
+      <Project>{84563536-839e-4b4e-bb7c-4a6321185cce}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

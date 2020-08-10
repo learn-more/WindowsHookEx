@@ -15,6 +15,8 @@ CFirstPage::_OnCreate()
     m_wstrSubHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_SUBHEADER);
     m_wstrText = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_TEXT);
 
+    m_Settings = HookDll_GetSettings();
+
     return 0;
 }
 

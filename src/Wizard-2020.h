@@ -36,6 +36,7 @@ class CMainWindow;
 class CPage;
 class CSecondPage;
 
+#include "HookDll/Shared.h"
 #include "CPage.h"
 #include "CFirstPage.h"
 #include "CMainWindow.h"

@@ -21,6 +21,8 @@ private:
     std::wstring m_wstrSubHeader;
     std::wstring m_wstrText;
 
+    SHARED_SETTINGS* m_Settings;
+
     CFirstPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();
     LRESULT _OnPaint();

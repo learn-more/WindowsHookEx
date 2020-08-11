@@ -14,6 +14,7 @@
 #include "targetver.h"
 #include <Windows.h>
 #include <CommCtrl.h>
+#include <WindowsX.h>
 
 #pragma warning(push)
 #pragma warning(disable:4458)

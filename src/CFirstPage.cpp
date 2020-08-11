@@ -13,40 +13,26 @@ CFirstPage::_OnCreate()
     // Load resources.
     m_wstrHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_HEADER);
     m_wstrSubHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_SUBHEADER);
-    m_wstrText = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_TEXT);
+ 
+    // Set up the ComboBox.
+    m_hComboHookType = CreateWindowExW(WS_EX_CLIENTEDGE, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(m_pMainWindow->GetGuiFont()), MAKELPARAM(TRUE, 0));
 
     m_Settings = HookDll_GetSettings();
 
-    return 0;
-}
-
-LRESULT
-CFirstPage::_OnPaint()
-{
-    // Get the window size.
-    RECT rcWindow;
-    GetClientRect(m_hWnd, &rcWindow);
-
-    // Begin a double-buffered paint.
-    PAINTSTRUCT ps;
-    HDC hDC = BeginPaint(m_hWnd, &ps);
-    HDC hMemDC = CreateCompatibleDC(hDC);
-    HBITMAP hMemBitmap = CreateCompatibleBitmap(hDC, rcWindow.right, rcWindow.bottom);
-    SelectObject(hMemDC, hMemBitmap);
-
-    // Fill the window with the window background color.
-    FillRect(hMemDC, &rcWindow, GetSysColorBrush(COLOR_BTNFACE));
-
-    // Draw the intro text.
-    SelectObject(hMemDC, m_pMainWindow->GetGuiFont());
-    SetBkColor(hMemDC, GetSysColor(COLOR_BTNFACE));
-    DrawTextW(hMemDC, m_wstrText.c_str(), m_wstrText.size(), &rcWindow, DT_WORDBREAK);
-
-    // End painting by copying the in-memory DC.
-    BitBlt(hDC, 0, 0, rcWindow.right, rcWindow.bottom, hMemDC, 0, 0, SRCCOPY);
-    DeleteObject(hMemBitmap);
-    DeleteDC(hMemDC);
-    EndPaint(m_hWnd, &ps);
+    for (int n = WH_MIN; n <= WH_MAX; ++n)
+    {
+        LPCWSTR wstrText = HookDll_HookName(n);
+        if (wstrText)
+        {
+            int index = ComboBox_AddString(m_hComboHookType, wstrText);
+            ComboBox_SetItemData(m_hComboHookType, index, n);
+            if (n == m_Settings->idHook)
+            {
+                ComboBox_SetCurSel(m_hComboHookType, index);
+            }
+        }
+    }
 
     return 0;
 }
@@ -59,7 +45,17 @@ CFirstPage::_OnSize()
     GetClientRect(m_hWnd, &rcWindow);
 
     // The text is drawn on most of the window, so invalidate that.
-    InvalidateRect(m_hWnd, &rcWindow, FALSE);
+    InvalidateRect(m_hWnd, &rcWindow, TRUE);
+    // Move the list control.
+    HDWP hDwp = BeginDeferWindowPos(1);
+
+    int iCboLeft = 0;
+    int iCboTop = 0;
+    int iCboWidth = rcWindow.right / 3;// = rcWindow.bottom;
+    int iCboHeight = 3;// rcWindow.right;
+    DeferWindowPos(hDwp, m_hComboHookType, nullptr, iCboLeft, iCboTop, iCboWidth, iCboHeight, 0);
+
+    EndDeferWindowPos(hDwp);
 
     return 0;
 }
@@ -74,7 +70,6 @@ CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (uMsg)
         {
             case WM_CREATE: return pPage->_OnCreate();
-            case WM_PAINT: return pPage->_OnPaint();
             case WM_SIZE: return pPage->_OnSize();
         }
     }
@@ -94,4 +89,7 @@ CFirstPage::SwitchTo()
 void
 CFirstPage::UpdateDPI()
 {
+    // Update the control fonts.
+    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(m_pMainWindow->GetGuiFont()), MAKELPARAM(TRUE, 0));
 }
+

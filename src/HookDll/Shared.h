@@ -11,7 +11,7 @@
 
 struct SHARED_SETTINGS
 {
-    int idHook;
+    int idHook = WH_KEYBOARD;
 };
 
 
@@ -21,4 +21,8 @@ SHARED_SETTINGS*
 HOOKDLL_DECLSPEC
 HookDll_GetSettings(void);
 
+HOOKDLL_EXPORT
+LPCWSTR
+HOOKDLL_DECLSPEC
+HookDll_HookName(int idHook);
 

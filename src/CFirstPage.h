@@ -17,15 +17,14 @@ private:
     friend class CPage;
     static constexpr WCHAR _wszWndClass[] = L"FirstPageWndClass";
 
+    HWND m_hComboHookType;
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;
-    std::wstring m_wstrText;
 
     SHARED_SETTINGS* m_Settings;
 
     CFirstPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();
-    LRESULT _OnPaint();
     LRESULT _OnSize();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

@@ -12,8 +12,10 @@ public:
     static std::unique_ptr<CSecondPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CSecondPage>(pMainWindow); }
 
     HWND GetList() const { return m_hList; }
-    void SwitchTo();
-    void UpdateDPI();
+    virtual void SwitchTo() override;
+    virtual void OnBack() override;
+    virtual void OnNext() override;
+    virtual void UpdateDPI() override;
 
 private:
     friend class CPage;

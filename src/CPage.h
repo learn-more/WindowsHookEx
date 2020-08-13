@@ -11,6 +11,8 @@ class CPage
 public:
     HWND GetHwnd() const { return m_hWnd; }
     virtual void SwitchTo() = 0;
+    virtual void OnBack() = 0;
+    virtual void OnNext() = 0;
     virtual void UpdateDPI() = 0;
 
 protected:

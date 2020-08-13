@@ -85,6 +85,18 @@ CSecondPage::SwitchTo()
 }
 
 void
+CSecondPage::OnBack()
+{
+    HookDll_UninstallHook();
+}
+
+void
+CSecondPage::OnNext()
+{
+
+}
+
+void
 CSecondPage::UpdateDPI()
 {
 }

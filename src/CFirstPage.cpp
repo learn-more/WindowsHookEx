@@ -87,6 +87,17 @@ CFirstPage::SwitchTo()
 }
 
 void
+CFirstPage::OnBack()
+{
+
+}
+
+void
+CFirstPage::OnNext()
+{
+}
+
+void
 CFirstPage::UpdateDPI()
 {
     // Update the control fonts.

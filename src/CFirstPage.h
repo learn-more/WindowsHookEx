@@ -10,8 +10,10 @@ class CFirstPage : public CPage
 {
 public:
     static std::unique_ptr<CFirstPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CFirstPage>(pMainWindow); }
-    void SwitchTo();
-    void UpdateDPI();
+    virtual void SwitchTo() override;
+    virtual void OnBack() override;
+    virtual void OnNext() override;
+    virtual void UpdateDPI() override;
 
 private:
     friend class CPage;

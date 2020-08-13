@@ -48,6 +48,7 @@ CMainWindow::_OnBackButton()
 {
     if (m_pCurrentPage == m_pSecondPage.get())
     {
+        m_pCurrentPage->OnBack();
         _SwitchPage(m_pFirstPage.get());
     }
 
@@ -65,6 +66,7 @@ CMainWindow::_OnNextButton()
 {
     if (m_pCurrentPage == m_pFirstPage.get())
     {
+        m_pCurrentPage->OnNext();
         _SwitchPage(m_pSecondPage.get());
     }
 

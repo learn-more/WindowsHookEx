@@ -11,9 +11,29 @@
 
 struct SHARED_SETTINGS
 {
-    int idHook = WH_KEYBOARD;
+    // Settings for the 'Current' hook
+    int idHook;
+    BOOL GlobalHook;
+
+    // 
+    DWORD HostProcess;
+    HHOOK hHook;
+
+    LONG NumberOfDllsLoaded;
 };
 
+#define EVENT_DLL_LOAD      100
+#define EVENT_DLL_UNLOAD    101
+
+struct HOOK_EVENT
+{
+    DWORD ProcessId;
+    DWORD ThreadId;
+    DWORD HookType;
+    int nCode;
+    WPARAM wParam;
+    LPARAM lParam;
+};
 
 
 HOOKDLL_EXPORT
@@ -25,4 +45,27 @@ HOOKDLL_EXPORT
 LPCWSTR
 HOOKDLL_DECLSPEC
 HookDll_HookName(int idHook);
+
+
+HOOKDLL_EXPORT
+BOOL
+HOOKDLL_DECLSPEC
+HookDll_CanBeSetLocal(int idHook);
+
+HOOKDLL_EXPORT
+BOOL
+HOOKDLL_DECLSPEC
+HookDll_GetEvent(_Out_ HOOK_EVENT* Event);
+
+
+
+HOOKDLL_EXPORT
+BOOL
+HOOKDLL_DECLSPEC
+HookDll_InstallHook();
+
+HOOKDLL_EXPORT
+VOID
+HOOKDLL_DECLSPEC
+HookDll_UninstallHook();
 

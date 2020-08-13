@@ -12,9 +12,8 @@ BEGIN
     IDS_NEXT                        "Next >"
     IDS_CANCEL                      "Cancel"
 
-    IDS_FIRSTPAGE_HEADER            "First Page"
-    IDS_FIRSTPAGE_SUBHEADER         "This is the first page."
-    IDS_FIRSTPAGE_TEXT              "Lorem ipsum dolor amet bitters food truck sustainable authentic microdosing tilde four dollar toast selvage 3 wolf moon fixie literally shaman put a bird on it lyft. Vaporware poke bushwick glossier everyday carry man braid butcher iceland chambray etsy af godard. Locavore pabst YOLO trust fund knausgaard bespoke viral gastropub. Hell of cloud bread flexitarian banh mi, photo booth biodiesel man braid keffiyeh fam put a bird on it pitchfork forage vinyl kombucha. Chambray raw denim taxidermy everyday carry four dollar toast squid salvia tattooed gluten-free vegan brunch typewriter. Keytar letterpress prism kickstarter chicharrones kitsch."
+    IDS_FIRSTPAGE_HEADER            "Select a hook type"
+    IDS_FIRSTPAGE_SUBHEADER         "And configure the parameters."
 
     IDS_SECONDPAGE_HEADER           "Second Page"
     IDS_SECONDPAGE_SUBHEADER        "This is the second page, who would have thought?"

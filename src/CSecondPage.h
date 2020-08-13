@@ -17,13 +17,19 @@ public:
     virtual void OnNext() override;
     virtual void UpdateDPI() override;
 
+    LRESULT OnDestroy();
+    LRESULT OnTimer(WPARAM wParam);
+
 private:
     friend class CPage;
     static constexpr WCHAR _wszWndClass[] = L"SecondPageWndClass";
 
     HWND m_hList;
     std::wstring m_wstrHeader;
+    std::wstring m_wstrSubHeaderFmt;
+    std::wstring m_wstrHookType;
     std::wstring m_wstrSubHeader;
+    int m_nColumns = 0;
 
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();

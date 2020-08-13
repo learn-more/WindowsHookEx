@@ -15,8 +15,16 @@ CFirstPage::_OnCreate()
     m_wstrSubHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_SUBHEADER);
  
     // Set up the ComboBox.
-    m_hComboHookType = CreateWindowExW(WS_EX_CLIENTEDGE, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
-    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(m_pMainWindow->GetGuiFont()), MAKELPARAM(TRUE, 0));
+    m_hComboHookType = CreateWindowExW(0, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+
+    // Set up the radio boxes.
+    std::wstring text = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_GLOBAL_HOOK);
+    m_hRadioGlobal = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    text = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_LOCAL_HOOK);
+    m_hRadioLocal = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+
+    // Set all fonts
+    UpdateDPI();
 
     m_Settings = HookDll_GetSettings();
 
@@ -34,6 +42,8 @@ CFirstPage::_OnCreate()
         }
     }
 
+    Button_SetCheck(m_hRadioGlobal, BST_CHECKED);
+
     return 0;
 }
 
@@ -47,13 +57,24 @@ CFirstPage::_OnSize()
     // The text is drawn on most of the window, so invalidate that.
     InvalidateRect(m_hWnd, &rcWindow, TRUE);
     // Move the list control.
-    HDWP hDwp = BeginDeferWindowPos(1);
+    HDWP hDwp = BeginDeferWindowPos(3);
 
-    int iCboLeft = 0;
-    int iCboTop = 0;
-    int iCboWidth = rcWindow.right / 3;// = rcWindow.bottom;
-    int iCboHeight = 3;// rcWindow.right;
-    DeferWindowPos(hDwp, m_hComboHookType, nullptr, iCboLeft, iCboTop, iCboWidth, iCboHeight, 0);
+    const int iControlPadding = m_pMainWindow->DefaultControlPaddingPx();
+    const int iButtonHeight = m_pMainWindow->DefaultButtonHeightPx();
+    //const int iButtonWidth = m_pMainWindow->DefaultButtonWidthPx();
+
+    int iControlX = 0;
+    int iControlY = 0;
+    int iControlWidth = rcWindow.right / 3 - iControlPadding / 2;
+    int iControlHeight = iButtonHeight;
+    hDwp = DeferWindowPos(hDwp, m_hComboHookType, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
+
+    iControlX = rcWindow.right / 3 + iControlPadding / 2;
+    iControlWidth = rcWindow.right / 3 - iControlPadding;
+    hDwp = DeferWindowPos(hDwp, m_hRadioGlobal, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
+
+    iControlY = iControlHeight;
+    hDwp = DeferWindowPos(hDwp, m_hRadioLocal, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
 
     EndDeferWindowPos(hDwp);
 
@@ -71,10 +92,33 @@ CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             case WM_CREATE: return pPage->_OnCreate();
             case WM_SIZE: return pPage->_OnSize();
+            case WM_COMMAND: return pPage->_OnCommand(wParam, lParam);
         }
     }
 
     return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT
+CFirstPage::_OnCommand(WPARAM wParam, LPARAM lParam)
+{
+    if (lParam == (LPARAM)m_hComboHookType)
+    {
+        if (HIWORD(wParam) == CBN_SELCHANGE)
+        {
+            int index = ComboBox_GetCurSel(m_hComboHookType);
+            int idHook = ComboBox_GetItemData(m_hComboHookType, index);
+            BOOL fSupportsLocalHook = HookDll_CanBeSetLocal(idHook);
+            Button_Enable(m_hRadioLocal, fSupportsLocalHook);
+            if (!fSupportsLocalHook)
+            {
+                Button_SetCheck(m_hRadioGlobal, BST_CHECKED);
+                Button_SetCheck(m_hRadioLocal, BST_UNCHECKED);
+            }
+        }
+    }
+
+    return 0;
 }
 
 void
@@ -95,12 +139,19 @@ CFirstPage::OnBack()
 void
 CFirstPage::OnNext()
 {
+    int index = ComboBox_GetCurSel(m_hComboHookType);
+    m_Settings->idHook = ComboBox_GetItemData(m_hComboHookType, index);
+    m_Settings->GlobalHook = Button_GetCheck(m_hRadioGlobal) == BST_CHECKED;
 }
 
 void
 CFirstPage::UpdateDPI()
 {
+    HFONT hGuiFont = m_pMainWindow->GetGuiFont();
+
     // Update the control fonts.
-    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(m_pMainWindow->GetGuiFont()), MAKELPARAM(TRUE, 0));
+    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
+    SendMessageW(m_hRadioGlobal, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
+    SendMessageW(m_hRadioLocal, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
 }
 

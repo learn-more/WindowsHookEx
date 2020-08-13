@@ -15,11 +15,16 @@ public:
     virtual void OnNext() override;
     virtual void UpdateDPI() override;
 
+    LRESULT _OnCommand(WPARAM wParam, LPARAM lParam);
+
 private:
     friend class CPage;
     static constexpr WCHAR _wszWndClass[] = L"FirstPageWndClass";
 
     HWND m_hComboHookType;
+    HWND m_hRadioGlobal;
+    HWND m_hRadioLocal;
+
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;
 

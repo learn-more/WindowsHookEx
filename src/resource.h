@@ -16,9 +16,12 @@
 
 #define IDS_FIRSTPAGE_HEADER            2000
 #define IDS_FIRSTPAGE_SUBHEADER         2001
-#define IDS_FIRSTPAGE_TEXT              2002
+#define IDS_GLOBAL_HOOK                 2002
+#define IDS_LOCAL_HOOK                  2003
 
-#define IDS_SECONDPAGE_HEADER           3000
+//#define IDS_SECONDPAGE_HEADER           3000
 #define IDS_SECONDPAGE_SUBHEADER        3001
-#define IDS_COLUMN1                     3002
-#define IDS_COLUMN2                     3003
+#define IDS_PROCESS                     3002
+#define IDS_THREAD                      3003
+#define IDS_HOOK                        3004
+#define IDS_INFO                        3005

@@ -15,6 +15,7 @@
 #include <Windows.h>
 #include <CommCtrl.h>
 #include <WindowsX.h>
+#include <strsafe.h>
 
 #pragma warning(push)
 #pragma warning(disable:4458)

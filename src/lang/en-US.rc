@@ -14,9 +14,14 @@ BEGIN
 
     IDS_FIRSTPAGE_HEADER            "Select a hook type"
     IDS_FIRSTPAGE_SUBHEADER         "And configure the parameters."
+    IDS_GLOBAL_HOOK                 "Global hook"
+    IDS_LOCAL_HOOK                  "Local hook"
 
-    IDS_SECONDPAGE_HEADER           "Second Page"
-    IDS_SECONDPAGE_SUBHEADER        "This is the second page, who would have thought?"
-    IDS_COLUMN1                     "Column 1"
-    IDS_COLUMN2                     "Column 2"
+    //IDS_SECONDPAGE_HEADER           "Second Page"
+    IDS_SECONDPAGE_SUBHEADER        "%s, number of loaded dlls: %d"
+    IDS_PROCESS                     "Process"
+    IDS_THREAD                      "Thread"
+    IDS_HOOK                        "Hook"
+    IDS_INFO                        "Info"
+
 END

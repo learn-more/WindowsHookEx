@@ -30,6 +30,8 @@ private:
     std::wstring m_wstrHookType;
     std::wstring m_wstrSubHeader;
     int m_nColumns = 0;
+    int m_nLastHeaderUpdate = 0;
+    bool m_Active = false;
 
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();

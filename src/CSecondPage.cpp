@@ -130,12 +130,14 @@ CSecondPage::SwitchTo()
     ShowWindow(m_hWnd, SW_SHOW);
 
     HookDll_InstallHook();
+    m_Active = true;
 }
 
 void
 CSecondPage::OnBack()
 {
     HookDll_UninstallHook();
+    m_Active = false;
 }
 
 void
@@ -153,10 +155,23 @@ CSecondPage::UpdateDPI()
 LRESULT
 CSecondPage::OnTimer(WPARAM wParam)
 {
+    static WCHAR Buffer[512];
+
+    if (m_Active && (m_nLastHeaderUpdate == 0 || (GetTickCount() - m_nLastHeaderUpdate) > 1000))
+    {
+        m_nLastHeaderUpdate = GetTickCount();
+        StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), HookDll_GetSettings()->NumberOfDllsLoaded);
+
+        if (m_wstrSubHeader != Buffer)
+        {
+            m_wstrSubHeader = Buffer;
+            m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
+        }
+    }
+
     if (wParam == 0x1234)
     {
         HOOK_EVENT Event = { 0 };
-        WCHAR Buffer[512];
         int last = -1;
         for (UINT n = 0; n < 20; ++n)
         {

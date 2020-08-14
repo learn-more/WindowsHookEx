@@ -7,10 +7,8 @@
 /****************************************************************
   WH_CALLWNDPROC hook procedure
  ****************************************************************/
-
 LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_CALLWNDPROC;
     Event.Info.Hook.nCode = nCode;
@@ -19,7 +17,230 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
-#else
+}
+
+/****************************************************************
+  WH_GETMESSAGE hook procedure
+ ****************************************************************/
+LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_GETMESSAGE;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+
+/****************************************************************
+  WH_DEBUG hook procedure
+ ****************************************************************/
+LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_DEBUG;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_CBT hook procedure
+ ****************************************************************/
+LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_CBT;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_MOUSE hook procedure
+ ****************************************************************/
+LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_MOUSE;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_KEYBOARD hook procedure
+ ****************************************************************/
+LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_KEYBOARD;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+
+/****************************************************************
+  WH_MSGFILTER hook procedure
+ ****************************************************************/
+LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = (DWORD)WH_MSGFILTER;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+
+
+/****************************************************************
+  WH_JOURNALRECORD hook procedure
+ ****************************************************************/
+LRESULT CALLBACK JournalRecordProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_JOURNALRECORD;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_JOURNALPLAYBACK hook procedure
+ ****************************************************************/
+LRESULT CALLBACK JournalPlaybackProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_JOURNALPLAYBACK;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_SYSMSGFILTER hook procedure
+ ****************************************************************/
+LRESULT CALLBACK SysMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_SYSMSGFILTER;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_SHELL hook procedure
+ ****************************************************************/
+LRESULT CALLBACK ShellProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_SHELL;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_FOREGROUNDIDLE hook procedure
+ ****************************************************************/
+LRESULT CALLBACK ForegroundIdleProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_FOREGROUNDIDLE;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_CALLWNDPROCRET hook procedure
+ ****************************************************************/
+LRESULT CALLBACK CallWndRetProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_CALLWNDPROCRET;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_KEYBOARD_LL hook procedure
+ ****************************************************************/
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_KEYBOARD_LL;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+/****************************************************************
+  WH_MOUSE_LL hook procedure
+ ****************************************************************/
+LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = WH_MOUSE_LL;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
+
+    return CallNextHookEx(0, nCode, wParam, lParam);
+}
+
+
+
+#if 0
+/****************************************************************
+  WH_CALLWNDPROC hook procedure
+ ****************************************************************/
+LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
     CHAR szCWPBuf[256];
     CHAR szMsg[16];
     HDC hdc;
@@ -62,25 +283,13 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_CALLWNDPROC].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
   WH_GETMESSAGE hook procedure
  ****************************************************************/
-
 LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_GETMESSAGE;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
     CHAR szMSGBuf[256];
     CHAR szRem[16];
     CHAR szMsg[16];
@@ -152,7 +361,6 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_GETMESSAGE].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
@@ -161,17 +369,6 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_DEBUG;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
-
     CHAR szBuf[128];
     HDC hdc;
     static int c = 0;
@@ -209,7 +406,6 @@ LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_DEBUG].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
@@ -218,17 +414,6 @@ LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_CBT;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
-
     CHAR szBuf[128];
     CHAR szCode[128];
     HDC hdc;
@@ -347,7 +532,6 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_CBT].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
@@ -356,17 +540,6 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_MOUSE;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
-
     CHAR szBuf[128];
     CHAR szMsg[16];
     HDC hdc;
@@ -400,7 +573,6 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_MOUSE].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
@@ -409,17 +581,6 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_KEYBOARD;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
-
     CHAR szBuf[128];
     HDC hdc;
     static int c = 0;
@@ -445,7 +606,6 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_KEYBOARD].hhook, nCode, wParam, lParam);
-#endif
 }
 
 /****************************************************************
@@ -454,17 +614,6 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-#if 1
-    HOOK_EVENT Event = { 0 };
-    Event.HookType = (DWORD)WH_MSGFILTER;
-    Event.Info.Hook.nCode = nCode;
-    Event.Info.Hook.msg.wParam = wParam;
-    Event.Info.Hook.msg.lParam = lParam;
-    Event_Push(Event);
-
-    return CallNextHookEx(0, nCode, wParam, lParam);
-#else
-
     CHAR szBuf[128];
     CHAR szMsg[16];
     CHAR szCode[32];
@@ -534,5 +683,6 @@ LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_MSGFILTER].hhook, nCode, wParam, lParam);
-#endif
 }
+
+#endif

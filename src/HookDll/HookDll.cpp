@@ -25,21 +25,21 @@ struct HOOK_INFO
 
 HOOK_INFO g_HookInfo[] = {
     { L"WH_MSGFILTER", TRUE, MessageProc },
-    { L"WH_JOURNALRECORD", FALSE },
-    { L"WH_JOURNALPLAYBACK", FALSE },
+    { L"WH_JOURNALRECORD", FALSE, JournalRecordProc },
+    { L"WH_JOURNALPLAYBACK", FALSE, JournalPlaybackProc },
     { L"WH_KEYBOARD", TRUE, KeyboardProc },
     { L"WH_GETMESSAGE", TRUE, GetMsgProc },
     { L"WH_CALLWNDPROC", TRUE, CallWndProc },
     { L"WH_CBT", TRUE, CBTProc },
-    { L"WH_SYSMSGFILTER", FALSE },
+    { L"WH_SYSMSGFILTER", FALSE, SysMsgProc },
     { L"WH_MOUSE", TRUE, MouseProc },
     { L"WH_HARDWARE", }, /* Does not exist anymore? */
     { L"WH_DEBUG", TRUE, DebugProc },
-    { L"WH_SHELL", TRUE },
-    { L"WH_FOREGROUNDIDLE", TRUE },
-    { L"WH_CALLWNDPROCRET", TRUE },
-    { L"WH_KEYBOARD_LL", FALSE },
-    { L"WH_MOUSE_LL", FALSE },
+    { L"WH_SHELL", TRUE, ShellProc },
+    { L"WH_FOREGROUNDIDLE", TRUE, ForegroundIdleProc },
+    { L"WH_CALLWNDPROCRET", TRUE, CallWndRetProc },
+    { L"WH_KEYBOARD_LL", FALSE, LowLevelKeyboardProc },
+    { L"WH_MOUSE_LL", FALSE, LowLevelMouseProc },
 };
 
 static

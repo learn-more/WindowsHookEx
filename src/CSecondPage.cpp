@@ -11,7 +11,7 @@
 static int g_ColumnWidths[] = {
     100,
     60,
-    130
+    150
 };
 
 
@@ -25,7 +25,6 @@ CSecondPage::_OnCreate()
     m_hList = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     ListView_SetExtendedListViewStyle(m_hList, LVS_EX_DOUBLEBUFFER | LVS_EX_FULLROWSELECT);
 
-    SetTimer(m_hWnd, 0x1234, 200, nullptr);
 
     LVCOLUMNW lvColumn = { 0 };
     lvColumn.mask = LVCF_TEXT;
@@ -46,7 +45,8 @@ CSecondPage::_OnCreate()
     lvColumn.pszText = wstrColumn.data();
     ListView_InsertColumn(m_hList, m_nColumns++, &lvColumn);
 
-
+    m_Events.resize(100);
+    SetTimer(m_hWnd, 0x1234, 200, nullptr);
 
     return 0;
 }
@@ -170,40 +170,52 @@ CSecondPage::OnTimer(WPARAM wParam)
 
     if (wParam == 0x1234)
     {
-        HOOK_EVENT Event = { 0 };
         int last = -1;
         for (UINT n = 0; n < 20; ++n)
         {
-            if (!HookDll_GetEvent(&Event))
+            SIZE_T readItems = m_Events.size();
+            HookDll_GetEvents(m_Events.data(), &readItems);
+            if (readItems == 0)
             {
                 break;
             }
 
-            LVITEM lvI = { 0 };
+            if (last == -1)
+            {
+                SetWindowRedraw(m_hList, FALSE);
+            }
 
-            lvI.pszText = Buffer;
-            lvI.iItem = INT_MAX;
-            lvI.mask = LVIF_TEXT;
+            for (SIZE_T j = 0; j < readItems; ++j)
+            {
+                const auto& Event = m_Events[j];
 
-            StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ProcessId);
-            lvI.iItem = ListView_InsertItem(m_hList, &lvI);
-            last = lvI.iItem;
-            lvI.iSubItem++;
+                LVITEM lvI = { 0 };
 
-            StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ThreadId);
-            ListView_SetItem(m_hList, &lvI);
-            lvI.iSubItem++;
+                lvI.pszText = Buffer;
+                lvI.iItem = INT_MAX;
+                lvI.mask = LVIF_TEXT;
 
-            StringCchPrintfW(Buffer, _countof(Buffer), L"%s", HookDll_HookName(Event.HookType));
-            ListView_SetItem(m_hList, &lvI);
-            lvI.iSubItem++;
+                StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ProcessId);
+                lvI.iItem = ListView_InsertItem(m_hList, &lvI);
+                last = lvI.iItem;
+                lvI.iSubItem++;
 
-            HookDll_FormatInfo(Buffer, _countof(Buffer), &Event);
+                StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ThreadId);
+                ListView_SetItem(m_hList, &lvI);
+                lvI.iSubItem++;
 
-            ListView_SetItem(m_hList, &lvI);
+                StringCchPrintfW(Buffer, _countof(Buffer), L"%s", HookDll_HookName(Event.HookType));
+                ListView_SetItem(m_hList, &lvI);
+                lvI.iSubItem++;
+
+                HookDll_FormatInfo(Buffer, _countof(Buffer), &Event);
+
+                ListView_SetItem(m_hList, &lvI);
+            }
         }
         if (last >= 0)
         {
+            SetWindowRedraw(m_hList, TRUE);
             ListView_EnsureVisible(m_hList, last, TRUE);
         }
     }

@@ -51,25 +51,27 @@ void Event_Push(HOOK_EVENT& event)
     Queue_Unlock(queue);
 }
 
-bool Event_Pop(HOOK_EVENT& event)
+void Event_Pop(HOOK_EVENT* event, size_t& NumEvents)
 {
     SHARED_MEM_QUEUE* queue = &SharedMem_Pointer()->Queue;
+
+    size_t readEvents = NumEvents;
+    NumEvents = 0;
 
     if (queue->Tail != queue->Head)
     {
         if (!Queue_Lock(queue, &queue->ReadAbort))
-            return false;
+            return;
 
-        if (queue->Tail != queue->Head)
+        while (queue->Tail != queue->Head && readEvents)
         {
-            event = queue->Events[queue->Tail];
+            *event = queue->Events[queue->Tail];
             queue->Tail = (queue->Tail + 1) % MAX_EVENTS;
 
-            Queue_Unlock(queue);
-            return true;
+            event++;
+            NumEvents++;
+            readEvents--;
         }
         Queue_Unlock(queue);
     }
-
-    return false;
 }

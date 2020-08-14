@@ -32,6 +32,7 @@ private:
     int m_nColumns = 0;
     int m_nLastHeaderUpdate = 0;
     bool m_Active = false;
+    std::vector<HOOK_EVENT> m_Events;
 
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();

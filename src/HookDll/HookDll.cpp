@@ -99,18 +99,20 @@ HookDll_CanBeSetLocal(int idHook)
 }
 
 HOOKDLL_EXPORT
-BOOL
+VOID
 HOOKDLL_DECLSPEC
-HookDll_GetEvent(_Out_ HOOK_EVENT* Event)
+HookDll_GetEvents(_Out_ HOOK_EVENT* Events, _Inout_ SIZE_T* NumberOfEvents)
 {
-    return Event_Pop(*Event) ? TRUE : FALSE;
+    size_t Tmp = *NumberOfEvents;
+    Event_Pop(Events, Tmp);
+    *NumberOfEvents = Tmp;
 }
 
 
 HOOKDLL_EXPORT
 VOID
 HOOKDLL_DECLSPEC
-HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, HOOK_EVENT* Event)
+HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
 {
     auto& hook = Event->Info.Hook;
     LPCWSTR Ptr;

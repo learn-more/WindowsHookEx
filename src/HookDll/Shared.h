@@ -69,6 +69,10 @@ VOID
 HOOKDLL_DECLSPEC
 HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event);
 
+HOOKDLL_EXPORT
+VOID
+HOOKDLL_DECLSPEC
+HookDll_FormatMiscInfo(LPWSTR pszDest, size_t cchDest);
 
 
 HOOKDLL_EXPORT

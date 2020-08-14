@@ -146,6 +146,28 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
     }
 }
 
+HOOKDLL_EXPORT
+VOID
+HOOKDLL_DECLSPEC
+HookDll_FormatMiscInfo(LPWSTR pszDest, size_t cchDest)
+{
+    SHARED_MEM* Ptr = SharedMem_Pointer();
+
+    if (Ptr->Queue.Dropped || Ptr->Queue.ReadAbort || Ptr->Queue.WriteAbort)
+    {
+        StringCchPrintfW(pszDest, cchDest, L"Instances: %d, Dropped: %d, Read/Write abort: %d/%d",
+            Ptr->Settings.NumberOfDllsLoaded - 1,
+            Ptr->Queue.Dropped,
+            Ptr->Queue.ReadAbort,
+            Ptr->Queue.WriteAbort);
+    }
+    else
+    {
+        StringCchPrintfW(pszDest, cchDest, L"Instances: %d", Ptr->Settings.NumberOfDllsLoaded - 1);
+    }
+
+
+}
 
 HOOKDLL_EXPORT
 BOOL

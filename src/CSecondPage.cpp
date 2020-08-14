@@ -120,7 +120,9 @@ CSecondPage::SwitchTo()
     m_wstrHookType = LoadStringAsWstr(m_pMainWindow->GetHInstance(), Settings->GlobalHook ? IDS_GLOBAL_HOOK : IDS_LOCAL_HOOK);
 
     WCHAR Buffer[512];
-    StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), Settings->NumberOfDllsLoaded);
+    WCHAR Info[512];
+    HookDll_FormatMiscInfo(Info, _countof(Info));
+    StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), Info);
     m_wstrSubHeader = Buffer;
 
     m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
@@ -159,7 +161,9 @@ CSecondPage::OnTimer(WPARAM wParam)
     if (m_Active && (m_nLastHeaderUpdate == 0 || (GetTickCount() - m_nLastHeaderUpdate) > 1000))
     {
         m_nLastHeaderUpdate = GetTickCount();
-        StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), HookDll_GetSettings()->NumberOfDllsLoaded);
+        WCHAR Info[512];
+        HookDll_FormatMiscInfo(Info, _countof(Info));
+        StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), Info);
 
         if (m_wstrSubHeader != Buffer)
         {

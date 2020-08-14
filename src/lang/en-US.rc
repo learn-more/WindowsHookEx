@@ -11,6 +11,7 @@ BEGIN
     IDS_BACK                        "< Back"
     IDS_NEXT                        "Next >"
     IDS_CANCEL                      "Cancel"
+    IDS_FINISH                      "Unhook"
 
     IDS_FIRSTPAGE_HEADER            "Select a hook type"
     IDS_FIRSTPAGE_SUBHEADER         "And configure the parameters."

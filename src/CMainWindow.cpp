@@ -69,8 +69,10 @@ CMainWindow::_OnNextButton()
         m_pCurrentPage->OnNext();
         _SwitchPage(m_pSecondPage.get());
     }
-
-    // The Next button is disabled for all other pages, so we don't have to handle these cases.
+    else if (m_pCurrentPage == m_pSecondPage.get())
+    {
+        m_pSecondPage->OnNext();
+    }
 }
 
 LRESULT
@@ -383,9 +385,14 @@ CMainWindow::EnableBackButton(BOOL bEnable)
 }
 
 void
-CMainWindow::EnableNextButton(BOOL bEnable)
+CMainWindow::EnableNextButton(BOOL bEnable, UINT uCaptionResource)
 {
     EnableWindow(m_hNext, bEnable);
+    if (uCaptionResource)
+    {
+        std::wstring wstrNext = LoadStringAsWstr(m_hInstance, uCaptionResource);
+        SetWindowTextW(m_hNext, wstrNext.c_str());
+    }
 }
 
 void

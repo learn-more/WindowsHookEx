@@ -126,7 +126,7 @@ CSecondPage::SwitchTo()
 
     m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
     m_pMainWindow->EnableBackButton(TRUE);
-    m_pMainWindow->EnableNextButton(FALSE);
+    m_pMainWindow->EnableNextButton(TRUE, IDS_FINISH);
     ShowWindow(m_hWnd, SW_SHOW);
 
     HookDll_InstallHook();
@@ -141,7 +141,8 @@ CSecondPage::OnBack()
 void
 CSecondPage::OnNext()
 {
-
+    HookDll_UninstallHook();
+    m_pMainWindow->EnableNextButton(FALSE, 0);
 }
 
 void

@@ -126,7 +126,7 @@ CFirstPage::SwitchTo()
 {
     m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
     m_pMainWindow->EnableBackButton(FALSE);
-    m_pMainWindow->EnableNextButton(TRUE);
+    m_pMainWindow->EnableNextButton(TRUE, IDS_NEXT);
     ShowWindow(m_hWnd, SW_SHOW);
 }
 

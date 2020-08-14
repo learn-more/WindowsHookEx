@@ -20,7 +20,7 @@ public:
 
     static std::unique_ptr<CMainWindow> Create(HINSTANCE hInstance, int nShowCmd);
     void EnableBackButton(BOOL bEnable);
-    void EnableNextButton(BOOL bEnable);
+    void EnableNextButton(BOOL bEnable, UINT uCaptionResource);
     void SetHeader(std::wstring* pwstrHeader, std::wstring* pwstrSubHeader);
     int WorkLoop();
 

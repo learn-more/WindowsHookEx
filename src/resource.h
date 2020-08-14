@@ -13,6 +13,7 @@
 #define IDS_BACK                        1000
 #define IDS_NEXT                        1001
 #define IDS_CANCEL                      1002
+#define IDS_FINISH                      1003
 
 #define IDS_FIRSTPAGE_HEADER            2000
 #define IDS_FIRSTPAGE_SUBHEADER         2001

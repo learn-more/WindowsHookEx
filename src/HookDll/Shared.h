@@ -58,10 +58,16 @@ BOOL
 HOOKDLL_DECLSPEC
 HookDll_CanBeSetLocal(int idHook);
 
+
 HOOKDLL_EXPORT
 BOOL
 HOOKDLL_DECLSPEC
 HookDll_GetEvent(_Out_ HOOK_EVENT* Event);
+
+HOOKDLL_EXPORT
+VOID
+HOOKDLL_DECLSPEC
+HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, HOOK_EVENT* Event);
 
 
 

@@ -42,7 +42,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
 
         if (fIsFirst)
         {
-            Settings->idHook = WH_KEYBOARD;
+            Settings->idHook = WH_CBT;
         }
 
         processName = getModuleFilename(NULL);

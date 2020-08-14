@@ -3,6 +3,8 @@
 #include "SharedMem.h"
 #include "Event.h"
 #include "Callbacks.h"
+#include "Format.h"
+#include <strsafe.h>
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
@@ -104,6 +106,43 @@ HookDll_GetEvent(_Out_ HOOK_EVENT* Event)
     return Event_Pop(*Event) ? TRUE : FALSE;
 }
 
+
+HOOKDLL_EXPORT
+VOID
+HOOKDLL_DECLSPEC
+HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, HOOK_EVENT* Event)
+{
+    auto& hook = Event->Info.Hook;
+    LPCWSTR Ptr;
+
+    switch (Event->HookType)
+    {
+    case WH_KEYBOARD:
+        StringCchPrintfW(pszDest, cchDest, L"nCode=%d, vk=%d, lParam=%p", hook.nCode, hook.msg.wParam, hook.msg.lParam);
+        break;
+    case EVENT_DLL_LOAD:
+    case EVENT_DLL_UNLOAD:
+        StringCchPrintfW(pszDest, cchDest, L"%s", Event->Info.Buffer);
+        break;
+    case WH_SHELL:
+        Ptr = Format_HSHELL(hook.nCode);
+        if (Ptr)
+            StringCchPrintfW(pszDest, cchDest, L"nCode=%s, wParam=%p, lParam=%p", Ptr, hook.msg.wParam, hook.msg.lParam);
+        else
+            StringCchPrintfW(pszDest, cchDest, L"nCode=?0x%x?, wParam=%p, lParam=%p", hook.nCode, hook.msg.wParam, hook.msg.lParam);
+        break;
+    case WH_CBT:
+        Ptr = Format_CBT(hook.nCode);
+        if (Ptr)
+            StringCchPrintfW(pszDest, cchDest, L"nCode=%s, wParam=%p, lParam=%p", Ptr, hook.msg.wParam, hook.msg.lParam);
+        else
+            StringCchPrintfW(pszDest, cchDest, L"nCode=?0x%x?, wParam=%p, lParam=%p", hook.nCode, hook.msg.wParam, hook.msg.lParam);
+        break;
+    default:
+        StringCchPrintfW(pszDest, cchDest, L"nCode=%d, wParam=%p, lParam=%p", hook.nCode, hook.msg.wParam, hook.msg.lParam);
+        break;
+    }
+}
 
 
 HOOKDLL_EXPORT

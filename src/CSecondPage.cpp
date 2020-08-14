@@ -9,7 +9,7 @@
 #include "HookDll/Shared.h"
 
 static int g_ColumnWidths[] = {
-    80,
+    100,
     60,
     130
 };
@@ -19,7 +19,6 @@ LRESULT
 CSecondPage::_OnCreate()
 {
     // Load resources.
-    //m_wstrHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_SECONDPAGE_HEADER);
     m_wstrSubHeaderFmt = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_SECONDPAGE_SUBHEADER);
 
     // Set up the ListView.
@@ -199,19 +198,7 @@ CSecondPage::OnTimer(WPARAM wParam)
             ListView_SetItem(m_hList, &lvI);
             lvI.iSubItem++;
 
-            switch (Event.HookType)
-            {
-            case WH_KEYBOARD:
-                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, vk=%d, lParam=%p", Event.Info.Hook.nCode, Event.Info.Hook.msg.wParam, Event.Info.Hook.msg.lParam);
-                break;
-            case EVENT_DLL_LOAD:
-            case EVENT_DLL_UNLOAD:
-                StringCchPrintfW(Buffer, _countof(Buffer), L"%s", Event.Info.Buffer);
-                break;
-            default:
-                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, wParam=%p, lParam=%p", Event.Info.Hook.nCode, Event.Info.Hook.msg.wParam, Event.Info.Hook.msg.lParam);
-                break;
-            }
+            HookDll_FormatInfo(Buffer, _countof(Buffer), &Event);
 
             ListView_SetItem(m_hList, &lvI);
         }

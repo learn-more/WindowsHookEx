@@ -186,12 +186,12 @@ CSecondPage::OnTimer(WPARAM wParam)
             lvI.iItem = INT_MAX;
             lvI.mask = LVIF_TEXT;
 
-            StringCchPrintfW(Buffer, _countof(Buffer), L"%05x", Event.ProcessId);
+            StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ProcessId);
             lvI.iItem = ListView_InsertItem(m_hList, &lvI);
             last = lvI.iItem;
             lvI.iSubItem++;
 
-            StringCchPrintfW(Buffer, _countof(Buffer), L"%05x", Event.ThreadId);
+            StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ThreadId);
             ListView_SetItem(m_hList, &lvI);
             lvI.iSubItem++;
 
@@ -202,10 +202,14 @@ CSecondPage::OnTimer(WPARAM wParam)
             switch (Event.HookType)
             {
             case WH_KEYBOARD:
-                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, vk=%d, lParam=%p", Event.nCode, Event.wParam, Event.lParam);
+                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, vk=%d, lParam=%p", Event.Info.Hook.nCode, Event.Info.Hook.msg.wParam, Event.Info.Hook.msg.lParam);
+                break;
+            case EVENT_DLL_LOAD:
+            case EVENT_DLL_UNLOAD:
+                StringCchPrintfW(Buffer, _countof(Buffer), L"%s", Event.Info.Buffer);
                 break;
             default:
-                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, wParam=%p, lParam=%p", Event.nCode, Event.wParam, Event.lParam);
+                StringCchPrintfW(Buffer, _countof(Buffer), L"nCode=%d, wParam=%p, lParam=%p", Event.Info.Hook.nCode, Event.Info.Hook.msg.wParam, Event.Info.Hook.msg.lParam);
                 break;
             }
 

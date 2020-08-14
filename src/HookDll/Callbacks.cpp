@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Callbacks.h"
 #include "Shared.h"
-#include "SharedMem.h"
+#include "Event.h"
 
 
 /****************************************************************
@@ -13,10 +13,10 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_CALLWNDPROC;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -74,10 +74,10 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_GETMESSAGE;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -164,10 +164,10 @@ LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_DEBUG;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -221,10 +221,10 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_CBT;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -359,10 +359,10 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_MOUSE;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -412,10 +412,10 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 #if 1
     HOOK_EVENT Event = { 0 };
     Event.HookType = WH_KEYBOARD;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else
@@ -456,11 +456,11 @@ LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 #if 1
     HOOK_EVENT Event = { 0 };
-    Event.HookType = WH_MSGFILTER;
-    Event.nCode = nCode;
-    Event.wParam = wParam;
-    Event.lParam = lParam;
-    SharedMem_Push(Event);
+    Event.HookType = (DWORD)WH_MSGFILTER;
+    Event.Info.Hook.nCode = nCode;
+    Event.Info.Hook.msg.wParam = wParam;
+    Event.Info.Hook.msg.lParam = lParam;
+    Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 #else

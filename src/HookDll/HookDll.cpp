@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Shared.h"
 #include "SharedMem.h"
+#include "Event.h"
 #include "Callbacks.h"
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
@@ -10,7 +11,7 @@ SHARED_SETTINGS*
 HOOKDLL_DECLSPEC
 HookDll_GetSettings(void)
 {
-    return SharedMem_Settings();
+    return &SharedMem_Pointer()->Settings;
 }
 
 struct HOOK_INFO
@@ -67,7 +68,17 @@ HookDll_HookName(int idHook)
     HOOK_INFO* hookInfo = GetHookInfo(idHook);
 
     if (!hookInfo)
+    {
+        switch (idHook)
+        {
+        case EVENT_DLL_LOAD: return L"EVENT_DLL_LOAD";
+        case EVENT_DLL_UNLOAD: return L"EVENT_DLL_UNLOAD";
+        default:
+            break;
+        }
+
         return nullptr;
+    }
 
     return hookInfo->Name;
 }
@@ -90,7 +101,7 @@ BOOL
 HOOKDLL_DECLSPEC
 HookDll_GetEvent(_Out_ HOOK_EVENT* Event)
 {
-    return SharedMem_Pop(*Event) ? TRUE : FALSE;
+    return Event_Pop(*Event) ? TRUE : FALSE;
 }
 
 
@@ -100,7 +111,7 @@ BOOL
 HOOKDLL_DECLSPEC
 HookDll_InstallHook(void)
 {
-    SHARED_SETTINGS* Settings = SharedMem_Settings();
+    SHARED_SETTINGS* Settings = &SharedMem_Pointer()->Settings;
 
     if (Settings->hHook != nullptr)
         return FALSE;
@@ -129,7 +140,7 @@ VOID
 HOOKDLL_DECLSPEC
 HookDll_UninstallHook()
 {
-    SHARED_SETTINGS* Settings = SharedMem_Settings();
+    SHARED_SETTINGS* Settings = &SharedMem_Pointer()->Settings;
 
     if (Settings->hHook && Settings->HostProcess == GetCurrentProcessId())
     {

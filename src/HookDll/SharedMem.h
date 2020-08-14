@@ -1,12 +1,27 @@
 #pragma once
 
+const auto MAX_EVENTS = 4096;
+
+struct SHARED_MEM_QUEUE
+{
+    UINT Busy;
+    UINT Head;
+    UINT Tail;
+    UINT Dropped;
+    UINT WriteAbort;
+    UINT ReadAbort;
+    HOOK_EVENT Events[MAX_EVENTS];
+};
+
+struct SHARED_MEM
+{
+    SHARED_SETTINGS Settings;
+    SHARED_MEM_QUEUE Queue;
+};
+
 
 void SharedMem_Open(BOOL& fIsFirst);
 void SharedMem_Close(void);
 
-struct SHARED_SETTINGS* SharedMem_Settings();
-
-
-void SharedMem_Push(struct HOOK_EVENT& event);
-bool SharedMem_Pop(struct HOOK_EVENT& event);
+SHARED_MEM* SharedMem_Pointer(void);
 

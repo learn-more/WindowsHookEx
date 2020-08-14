@@ -30,9 +30,15 @@ struct HOOK_EVENT
     DWORD ProcessId;
     DWORD ThreadId;
     DWORD HookType;
-    int nCode;
-    WPARAM wParam;
-    LPARAM lParam;
+    union
+    {
+        struct
+        {
+            int nCode;
+            MSG msg;
+        } Hook;
+        WCHAR Buffer[32];
+    } Info;
 };
 
 

@@ -35,6 +35,8 @@ struct HOOK_EVENT
         struct
         {
             int nCode;
+            WPARAM wParam;
+            LPARAM lParam;
             MSG msg;
         } Hook;
         WCHAR Buffer[32];

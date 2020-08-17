@@ -1,10 +1,12 @@
 #include "pch.h"
+#include <strsafe.h>
 #include "Format.h"
 
 #define CASE_RETURN(x)  case x: return L ## #x;
 
 LPCWSTR Format_HSHELL(int nCode)
 {
+    static WCHAR Buf[15];
     switch (nCode)
     {
         CASE_RETURN(HSHELL_WINDOWCREATED);
@@ -24,12 +26,15 @@ LPCWSTR Format_HSHELL(int nCode)
         CASE_RETURN(HSHELL_HIGHBIT);
         CASE_RETURN(HSHELL_FLASH);
         CASE_RETURN(HSHELL_RUDEAPPACTIVATED);
-    default: return NULL;
+    default:
+        StringCchPrintfW(Buf, ARRAYSIZE(Buf), L"?%d?", nCode);
+        return Buf;
     }
 }
 
 LPCWSTR Format_CBT(int nCode)
 {
+    static WCHAR Buf[15];
     switch (nCode)
     {
         CASE_RETURN(HCBT_MOVESIZE);
@@ -42,8 +47,46 @@ LPCWSTR Format_CBT(int nCode)
         CASE_RETURN(HCBT_KEYSKIPPED);
         CASE_RETURN(HCBT_SYSCOMMAND);
         CASE_RETURN(HCBT_SETFOCUS);
-    default: return NULL;
+    default:
+        StringCchPrintfW(Buf, ARRAYSIZE(Buf), L"?%d?", nCode);
+        return Buf;
     }
 }
+
+LPCWSTR Format_Action(int nCode)
+{
+    static WCHAR Buf[15];
+    switch (nCode)
+    {
+        CASE_RETURN(HC_ACTION);
+        CASE_RETURN(HC_GETNEXT);
+        CASE_RETURN(HC_SKIP);
+        CASE_RETURN(HC_NOREMOVE);
+        CASE_RETURN(HC_SYSMODALON);
+        CASE_RETURN(HC_SYSMODALOFF);
+    default:
+        StringCchPrintfW(Buf, ARRAYSIZE(Buf), L"?%d?", nCode);
+        return Buf;
+    }
+}
+
+LPCWSTR Format_PM(int nCode)
+{
+    static WCHAR Buf[15];
+    switch (nCode)
+    {
+        CASE_RETURN(PM_NOREMOVE);
+        CASE_RETURN(PM_REMOVE);
+        CASE_RETURN(PM_NOYIELD);
+        CASE_RETURN(PM_QS_INPUT);
+        CASE_RETURN(PM_QS_POSTMESSAGE);
+        CASE_RETURN(PM_QS_PAINT);
+        CASE_RETURN(PM_QS_SENDMESSAGE);
+    default:
+        StringCchPrintfW(Buf, ARRAYSIZE(Buf), L"?%d?", nCode);
+        return Buf;
+    }
+}
+
 
 

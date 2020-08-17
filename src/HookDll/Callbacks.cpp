@@ -50,7 +50,7 @@ LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event.HookType = WH_DEBUG;
     Event.Info.Hook.nCode = nCode;
     Event.Info.Hook.wParam = wParam;
-    Event.Info.Hook.lParam = lParam;
+    Event.Info.Hook.m.dbg = *(DEBUGHOOKINFO*)lParam;
     Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);
@@ -243,51 +243,6 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 }
 
 #if 0
-
-/****************************************************************
-  WH_DEBUG hook procedure
- ****************************************************************/
-
-LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
-    CHAR szBuf[128];
-    HDC hdc;
-    static int c = 0;
-    size_t cch;
-    HRESULT hResult;
-
-    if (nCode < 0)  // do not process message 
-        return CallNextHookEx(myhookdata[IDM_DEBUG].hhook, nCode,
-            wParam, lParam);
-
-    hdc = GetDC(gh_hwndMain);
-
-    switch (nCode)
-    {
-    case HC_ACTION:
-        hResult = StringCchPrintf(szBuf, 128 / sizeof(TCHAR),
-            "DEBUG - nCode: %d, tsk: %ld, %d times   ",
-            nCode, wParam, c++);
-        if (FAILED(hResult))
-        {
-            // TODO: write error handler
-        }
-        hResult = StringCchLength(szBuf, 128 / sizeof(TCHAR), &cch);
-        if (FAILED(hResult))
-        {
-            // TODO: write error handler
-        }
-        TextOut(hdc, 2, 55, szBuf, cch);
-        break;
-
-    default:
-        break;
-    }
-
-    ReleaseDC(gh_hwndMain, hdc);
-
-    return CallNextHookEx(myhookdata[IDM_DEBUG].hhook, nCode, wParam, lParam);
-}
 
 /****************************************************************
   WH_CBT hook procedure

@@ -44,6 +44,7 @@ struct HOOK_EVENT
                 MSG msg;
                 CWPSTRUCT wp;
                 CWPRETSTRUCT wpr;
+                DEBUGHOOKINFO dbg;
             } m;
         } Hook;
         WCHAR Buffer[32];

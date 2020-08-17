@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Callbacks.h"
 #include "Format.h"
+#include <cassert>
 #include <strsafe.h>
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
@@ -151,6 +152,13 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
         Ptr1 = Format_Action(hook.nCode);
         StringCchPrintfW(pszDest, cchDest, L"%s, cur proc: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
             Ptr1, hook.wParam, hook.m.wpr.hwnd, hook.m.wpr.message, hook.m.wpr.wParam, hook.m.wpr.lParam);
+        break;
+
+    case WH_DEBUG:
+        assert(hook.nCode == HC_ACTION);
+        Ptr1 = HookDll_HookName(hook.wParam);
+        StringCchPrintfW(pszDest, cchDest, L"(%s), tid=0x%x, " /*L"tidinstaller=0x%x, "*/ L"code=%d, wParam=%p, lParam=%p",
+            Ptr1, hook.m.dbg.idThread, /*hook.m.dbg.idThreadInstaller,*/ hook.m.dbg.code, hook.m.dbg.wParam, hook.m.dbg.lParam);
         break;
 
     default:

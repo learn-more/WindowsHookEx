@@ -122,6 +122,7 @@ CSecondPage::SwitchTo()
     m_pMainWindow->EnableNextButton(TRUE, IDS_FINISH);
     ShowWindow(m_hWnd, SW_SHOW);
 
+    Settings->IgnoreWnd = m_hWnd;
     HookDll_InstallHook();
     m_Active = true;
 }

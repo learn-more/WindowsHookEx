@@ -2,6 +2,12 @@
 #include "Shared.h"
 #include "SharedMem.h"
 
+bool Event_Ignored(HWND hWnd)
+{
+    HWND hIgnore = SharedMem_Pointer()->Settings.IgnoreWnd;
+    return hWnd == hIgnore ||
+        IsChild(hIgnore, hWnd);
+}
 
 bool Queue_Lock(SHARED_MEM_QUEUE* queue, UINT* FailureCounter)
 {

@@ -137,7 +137,20 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
     case WH_GETMESSAGE:
         Ptr1 = Format_Action(hook.nCode);
         Ptr2 = Format_PM(hook.wParam);
-        StringCchPrintfW(pszDest, cchDest, L"%s, %s, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p", Ptr1, Ptr2, hook.msg.hwnd, hook.msg.message, hook.msg.wParam, hook.msg.lParam);
+        StringCchPrintfW(pszDest, cchDest, L"%s, %s, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
+            Ptr1, Ptr2, hook.m.msg.hwnd, hook.m.msg.message, hook.m.msg.wParam, hook.m.msg.lParam);
+        break;
+
+    case WH_CALLWNDPROC:
+        Ptr1 = Format_Action(hook.nCode);
+        StringCchPrintfW(pszDest, cchDest, L"%s, cur thread: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
+            Ptr1, hook.wParam, hook.m.wp.hwnd, hook.m.wp.message, hook.m.wp.wParam, hook.m.wp.lParam);
+        break;
+
+    case WH_CALLWNDPROCRET:
+        Ptr1 = Format_Action(hook.nCode);
+        StringCchPrintfW(pszDest, cchDest, L"%s, cur proc: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
+            Ptr1, hook.wParam, hook.m.wpr.hwnd, hook.m.wpr.message, hook.m.wpr.wParam, hook.m.wpr.lParam);
         break;
 
     default:
@@ -212,6 +225,7 @@ HookDll_UninstallHook()
     {
         UnhookWindowsHookEx(Settings->hHook);
         Settings->hHook = nullptr;
+        Settings->IgnoreWnd = 0;
     }
 }
 

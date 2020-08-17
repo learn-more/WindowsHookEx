@@ -18,6 +18,7 @@ struct SHARED_SETTINGS
     // 
     DWORD HostProcess;
     HHOOK hHook;
+    HWND IgnoreWnd;
 
     LONG NumberOfDllsLoaded;
 };
@@ -38,7 +39,12 @@ struct HOOK_EVENT
             int nCode;
             WPARAM wParam;
             LPARAM lParam;
-            MSG msg;
+            union
+            {
+                MSG msg;
+                CWPSTRUCT wp;
+                CWPRETSTRUCT wpr;
+            } m;
         } Hook;
         WCHAR Buffer[32];
     } Info;

@@ -13,8 +13,11 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event.HookType = WH_CALLWNDPROC;
     Event.Info.Hook.nCode = nCode;
     Event.Info.Hook.wParam = wParam;
-    Event.Info.Hook.lParam = lParam;
-    Event_Push(Event);
+    Event.Info.Hook.m.wp = *(CWPSTRUCT*)lParam;
+    if (!Event_Ignored(Event.Info.Hook.m.wp.hwnd))
+    {
+        Event_Push(Event);
+    }
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 }
@@ -28,8 +31,11 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event.HookType = WH_GETMESSAGE;
     Event.Info.Hook.nCode = nCode;
     Event.Info.Hook.wParam = wParam;
-    Event.Info.Hook.msg = *(LPMSG)lParam;
-    Event_Push(Event);
+    Event.Info.Hook.m.msg = *(MSG*)lParam;
+    if (!Event_Ignored(Event.Info.Hook.m.msg.hwnd))
+    {
+        Event_Push(Event);
+    }
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 }
@@ -197,8 +203,11 @@ LRESULT CALLBACK CallWndRetProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event.HookType = WH_CALLWNDPROCRET;
     Event.Info.Hook.nCode = nCode;
     Event.Info.Hook.wParam = wParam;
-    Event.Info.Hook.lParam = lParam;
-    Event_Push(Event);
+    Event.Info.Hook.m.wpr = *(CWPRETSTRUCT*)lParam;
+    if (!Event_Ignored(Event.Info.Hook.m.wpr.hwnd))
+    {
+        Event_Push(Event);
+    }
 
     return CallNextHookEx(0, nCode, wParam, lParam);
 }
@@ -233,58 +242,7 @@ LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-
-
 #if 0
-/****************************************************************
-  WH_CALLWNDPROC hook procedure
- ****************************************************************/
-LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
-    CHAR szCWPBuf[256];
-    CHAR szMsg[16];
-    HDC hdc;
-    static int c = 0;
-    size_t cch;
-    HRESULT hResult;
-
-    if (nCode < 0)  // do not process message 
-        return CallNextHookEx(myhookdata[IDM_CALLWNDPROC].hhook, nCode, wParam, lParam);
-
-    // Call an application-defined function that converts a message 
-    // constant to a string and copies it to a buffer. 
-
-    LookUpTheMessage((PMSG)lParam, szMsg);
-
-    hdc = GetDC(gh_hwndMain);
-
-    switch (nCode)
-    {
-    case HC_ACTION:
-        hResult = StringCchPrintf(szCWPBuf, 256 / sizeof(TCHAR),
-            "CALLWNDPROC - tsk: %ld, msg: %s, %d times   ",
-            wParam, szMsg, c++);
-        if (FAILED(hResult))
-        {
-            // TODO: writer error handler
-        }
-        hResult = StringCchLength(szCWPBuf, 256 / sizeof(TCHAR), &cch);
-        if (FAILED(hResult))
-        {
-            // TODO: write error handler
-        }
-        TextOut(hdc, 2, 15, szCWPBuf, cch);
-        break;
-
-    default:
-        break;
-    }
-
-    ReleaseDC(gh_hwndMain, hdc);
-
-    return CallNextHookEx(myhookdata[IDM_CALLWNDPROC].hhook, nCode, wParam, lParam);
-}
-
 
 /****************************************************************
   WH_DEBUG hook procedure

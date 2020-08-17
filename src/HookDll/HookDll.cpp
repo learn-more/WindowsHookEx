@@ -153,20 +153,25 @@ HookDll_FormatMiscInfo(LPWSTR pszDest, size_t cchDest)
 {
     SHARED_MEM* Ptr = SharedMem_Pointer();
 
-    if (Ptr->Queue.Dropped || Ptr->Queue.ReadAbort || Ptr->Queue.WriteAbort)
+    STRSAFE_LPWSTR pszDestEnd;
+    size_t cchRemaining;
+
+    StringCchPrintfExW(pszDest, cchDest, &pszDestEnd, &cchRemaining, 0, L"External instances: %d", Ptr->Settings.NumberOfDllsLoaded - 1);
+
+    if (Ptr->Queue.Dropped)
     {
-        StringCchPrintfW(pszDest, cchDest, L"Instances: %d, Dropped: %d, Read/Write abort: %d/%d",
-            Ptr->Settings.NumberOfDllsLoaded - 1,
-            Ptr->Queue.Dropped,
-            Ptr->Queue.ReadAbort,
-            Ptr->Queue.WriteAbort);
-    }
-    else
-    {
-        StringCchPrintfW(pszDest, cchDest, L"Instances: %d", Ptr->Settings.NumberOfDllsLoaded - 1);
+        StringCchPrintfExW(pszDestEnd, cchRemaining, &pszDestEnd, &cchRemaining, 0, L", Dropped: %d", Ptr->Queue.Dropped);
     }
 
+    if (Ptr->Queue.ReadAbort)
+    {
+        StringCchPrintfExW(pszDestEnd, cchRemaining, &pszDestEnd, &cchRemaining, 0, L", R abort: %d", Ptr->Queue.ReadAbort);
+    }
 
+    if (Ptr->Queue.WriteAbort)
+    {
+        StringCchPrintfExW(pszDestEnd, cchRemaining, &pszDestEnd, &cchRemaining, 0, L", W abort: %d", Ptr->Queue.WriteAbort);
+    }
 }
 
 HOOKDLL_EXPORT

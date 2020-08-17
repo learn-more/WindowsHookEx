@@ -195,13 +195,26 @@ CSecondPage::OnTimer(WPARAM wParam)
             {
                 const auto& Event = m_Events[j];
 
+                if (Event.HookType == EVENT_DLL_LOAD)
+                {
+                    m_Processes[Event.ProcessId] = Event.Info.Buffer;
+                }
+
                 LVITEM lvI = { 0 };
 
                 lvI.pszText = Buffer;
                 lvI.iItem = INT_MAX;
                 lvI.mask = LVIF_TEXT;
 
-                StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ProcessId);
+                auto it = m_Processes.find(Event.ProcessId);
+                if (it != m_Processes.end())
+                {
+                    StringCchPrintfW(Buffer, _countof(Buffer), L"%s", it->second.c_str());
+                }
+                else
+                {
+                    StringCchPrintfW(Buffer, _countof(Buffer), L"%04x", Event.ProcessId);
+                }
                 lvI.iItem = ListView_InsertItem(m_hList, &lvI);
                 last = lvI.iItem;
                 lvI.iSubItem++;
@@ -217,6 +230,11 @@ CSecondPage::OnTimer(WPARAM wParam)
                 HookDll_FormatInfo(Buffer, _countof(Buffer), &Event);
 
                 ListView_SetItem(m_hList, &lvI);
+
+                if (Event.HookType == EVENT_DLL_UNLOAD)
+                {
+                    m_Processes.erase(Event.ProcessId);
+                }
             }
         }
         if (last >= 0)

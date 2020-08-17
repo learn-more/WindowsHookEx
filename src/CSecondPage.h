@@ -32,6 +32,7 @@ private:
     int m_nLastHeaderUpdate = 0;
     bool m_Active = false;
     std::vector<HOOK_EVENT> m_Events;
+    std::unordered_map<DWORD, std::wstring> m_Processes;
 
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     void _UpdateSubHeader();

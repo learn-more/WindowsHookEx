@@ -179,8 +179,6 @@ HookDll_InstallHook(void)
     if (Settings->hHook != nullptr)
         return FALSE;
 
-    Settings->HostProcess = GetCurrentProcessId();
-
     int idHook = Settings->idHook;
     HOOK_INFO* hookInfo = GetHookInfo(idHook);
 
@@ -209,7 +207,6 @@ HookDll_UninstallHook()
     {
         UnhookWindowsHookEx(Settings->hHook);
         Settings->hHook = nullptr;
-        Settings->HostProcess = 0;
     }
 }
 

@@ -43,6 +43,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
         if (fIsFirst)
         {
             Settings->idHook = WH_CBT;
+            Settings->HostProcess = GetCurrentProcessId();
         }
 
         processName = getModuleFilename(NULL);
@@ -62,6 +63,11 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
         break;
     case DLL_PROCESS_DETACH:
         Settings = &SharedMem_Pointer()->Settings;
+        if (Settings->HostProcess == GetCurrentProcessId())
+        {
+            Settings->HostProcess = 0;
+        }
+
         InterlockedDecrement(&Settings->NumberOfDllsLoaded);
 
         Event.HookType = EVENT_DLL_UNLOAD;

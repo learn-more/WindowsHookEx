@@ -9,7 +9,7 @@
 #include "HookDll/Shared.h"
 
 static int g_ColumnWidths[] = {
-    100,
+    120,
     60,
     150
 };
@@ -151,6 +151,24 @@ CSecondPage::_UpdateSubHeader()
     StringCchPrintfExW(Info, _countof(Info), &pszDestEnd, &cchRemaining, 0, L"%s, ", m_wstrHookType.data());
     HookDll_FormatMiscInfo(pszDestEnd, cchRemaining);
 
+    pszDestEnd = Info + wcslen(Info);
+    cchRemaining = _countof(Info) - (pszDestEnd - Info);
+
+    LPCWSTR Separator = L"\n";
+
+    DWORD pid = GetCurrentProcessId();
+
+    for (const auto& it : m_Processes)
+    {
+        if (it.first != pid)
+        {
+            StringCchCatExW(pszDestEnd, cchRemaining, Separator, &pszDestEnd, &cchRemaining, 0);
+            Separator = L", ";
+
+            StringCchCatExW(pszDestEnd, cchRemaining, it.second.c_str(), &pszDestEnd, &cchRemaining, 0);
+        }
+    }
+
     if (m_wstrSubHeader != Info)
     {
         m_wstrSubHeader = Info;
@@ -206,7 +224,7 @@ CSecondPage::OnTimer(WPARAM wParam)
                 lvI.iItem = INT_MAX;
                 lvI.mask = LVIF_TEXT;
 
-                auto it = m_Processes.find(Event.ProcessId);
+                const auto& it = m_Processes.find(Event.ProcessId);
                 if (it != m_Processes.end())
                 {
                     StringCchPrintfW(Buffer, _countof(Buffer), L"%s", it->second.c_str());

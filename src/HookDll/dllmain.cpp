@@ -6,6 +6,9 @@
 #include <string>
 #include <strsafe.h>
 
+static std::wstring g_ProcessName;
+
+
 std::wstring getModuleFilename(HMODULE Module)
 {
     std::wstring Buffer;
@@ -30,7 +33,6 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
 {
     BOOL fIsFirst = FALSE;
     HOOK_EVENT Event = { 0 };
-    static std::wstring processName;
 
     SHARED_SETTINGS* Settings;
     switch (ul_reason_for_call)
@@ -46,15 +48,15 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
             Settings->HostProcess = GetCurrentProcessId();
         }
 
-        processName = getModuleFilename(NULL);
+        g_ProcessName = getModuleFilename(NULL);
         {
-            std::wstring::size_type slash = processName.find_last_of(L"\\/");
+            std::wstring::size_type slash = g_ProcessName.find_last_of(L"\\/");
             if (slash != std::wstring::npos)
-                processName = processName.substr(slash + 1);
+                g_ProcessName = g_ProcessName.substr(slash + 1);
         }
 
         Event.HookType = EVENT_DLL_LOAD;
-        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), processName.c_str());
+        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), g_ProcessName.c_str());
         Event_Push(Event);
 
         break;
@@ -71,7 +73,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
         InterlockedDecrement(&Settings->NumberOfDllsLoaded);
 
         Event.HookType = EVENT_DLL_UNLOAD;
-        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), processName.c_str());
+        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), g_ProcessName.c_str());
         Event_Push(Event);
 
         SharedMem_Close();

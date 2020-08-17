@@ -146,8 +146,8 @@ CSecondPage::_UpdateSubHeader()
 {
     WCHAR Info[512 * 4];
 
-    STRSAFE_LPWSTR pszDestEnd;
-    size_t cchRemaining;
+    STRSAFE_LPWSTR pszDestEnd = nullptr;
+    size_t cchRemaining = 0;
 
     StringCchPrintfExW(Info, _countof(Info), &pszDestEnd, &cchRemaining, 0, L"%s, ", m_wstrHookType.data());
     HookDll_FormatMiscInfo(pszDestEnd, cchRemaining);

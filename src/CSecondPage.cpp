@@ -18,9 +18,6 @@ static int g_ColumnWidths[] = {
 LRESULT
 CSecondPage::_OnCreate()
 {
-    // Load resources.
-    m_wstrSubHeaderFmt = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_SECONDPAGE_SUBHEADER);
-
     // Set up the ListView.
     m_hList = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     ListView_SetExtendedListViewStyle(m_hList, LVS_EX_DOUBLEBUFFER | LVS_EX_FULLROWSELECT);
@@ -119,13 +116,8 @@ CSecondPage::SwitchTo()
 
     m_wstrHookType = LoadStringAsWstr(m_pMainWindow->GetHInstance(), Settings->GlobalHook ? IDS_GLOBAL_HOOK : IDS_LOCAL_HOOK);
 
-    WCHAR Buffer[512];
-    WCHAR Info[512];
-    HookDll_FormatMiscInfo(Info, _countof(Info));
-    StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), Info);
-    m_wstrSubHeader = Buffer;
+    _UpdateSubHeader();
 
-    m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
     m_pMainWindow->EnableBackButton(TRUE);
     m_pMainWindow->EnableNextButton(TRUE, IDS_FINISH);
     ShowWindow(m_hWnd, SW_SHOW);
@@ -149,6 +141,24 @@ CSecondPage::OnNext()
 }
 
 void
+CSecondPage::_UpdateSubHeader()
+{
+    WCHAR Info[512 * 4];
+
+    STRSAFE_LPWSTR pszDestEnd;
+    size_t cchRemaining;
+
+    StringCchPrintfExW(Info, _countof(Info), &pszDestEnd, &cchRemaining, 0, L"%s, ", m_wstrHookType.data());
+    HookDll_FormatMiscInfo(pszDestEnd, cchRemaining);
+
+    if (m_wstrSubHeader != Info)
+    {
+        m_wstrSubHeader = Info;
+        m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
+    }
+}
+
+void
 CSecondPage::UpdateDPI()
 {
 }
@@ -161,15 +171,7 @@ CSecondPage::OnTimer(WPARAM wParam)
     if (m_Active && (m_nLastHeaderUpdate == 0 || (GetTickCount() - m_nLastHeaderUpdate) > 1000))
     {
         m_nLastHeaderUpdate = GetTickCount();
-        WCHAR Info[512];
-        HookDll_FormatMiscInfo(Info, _countof(Info));
-        StringCchPrintfW(Buffer, _countof(Buffer), m_wstrSubHeaderFmt.data(), m_wstrHookType.data(), Info);
-
-        if (m_wstrSubHeader != Buffer)
-        {
-            m_wstrSubHeader = Buffer;
-            m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
-        }
+        _UpdateSubHeader();
     }
 
     if (wParam == 0x1234)

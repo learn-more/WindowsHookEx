@@ -26,7 +26,6 @@ private:
 
     HWND m_hList;
     std::wstring m_wstrHeader;
-    std::wstring m_wstrSubHeaderFmt;
     std::wstring m_wstrHookType;
     std::wstring m_wstrSubHeader;
     int m_nColumns = 0;
@@ -35,6 +34,7 @@ private:
     std::vector<HOOK_EVENT> m_Events;
 
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
+    void _UpdateSubHeader();
     LRESULT _OnCreate();
     LRESULT _OnSize();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

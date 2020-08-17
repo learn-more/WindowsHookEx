@@ -25,6 +25,7 @@ struct SHARED_SETTINGS
 #define EVENT_DLL_LOAD      100
 #define EVENT_DLL_UNLOAD    101
 
+// Linked list, variable data instead?
 struct HOOK_EVENT
 {
     DWORD ProcessId;

@@ -18,8 +18,6 @@ BEGIN
     IDS_GLOBAL_HOOK                 "Global hook"
     IDS_LOCAL_HOOK                  "Local hook"
 
-    //IDS_SECONDPAGE_HEADER           "Second Page"
-    IDS_SECONDPAGE_SUBHEADER        "%s, %s"
     IDS_PROCESS                     "Process"
     IDS_THREAD                      "Thread"
     IDS_HOOK                        "Hook"

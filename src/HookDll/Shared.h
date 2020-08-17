@@ -25,6 +25,8 @@ struct SHARED_SETTINGS
 
 #define EVENT_DLL_LOAD      100
 #define EVENT_DLL_UNLOAD    101
+#define EVENT_HOOK          102
+#define EVENT_UNHOOK        103
 
 // Linked list, variable data instead?
 struct HOOK_EVENT

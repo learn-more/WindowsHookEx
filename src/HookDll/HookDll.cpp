@@ -74,8 +74,10 @@ HookDll_HookName(int idHook)
     {
         switch (idHook)
         {
-        case EVENT_DLL_LOAD: return L"EVENT_DLL_LOAD";
-        case EVENT_DLL_UNLOAD: return L"EVENT_DLL_UNLOAD";
+        case EVENT_DLL_LOAD:    return L"DLL_LOAD";
+        case EVENT_DLL_UNLOAD:  return L"DLL_UNLOAD";
+        case EVENT_HOOK:        return L"HOOK";
+        case EVENT_UNHOOK:      return L"UNHOOK";
         default:
             break;
         }
@@ -126,6 +128,10 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
     case EVENT_DLL_LOAD:
     case EVENT_DLL_UNLOAD:
         StringCchPrintfW(pszDest, cchDest, L"%s", Event->Info.Buffer);
+        break;
+    case EVENT_HOOK:
+    case EVENT_UNHOOK:
+        StringCchPrintfW(pszDest, cchDest, L"");
         break;
     case WH_SHELL:
         Ptr1 = Format_HSHELL(hook.nCode);
@@ -217,6 +223,9 @@ HookDll_InstallHook(void)
     HINSTANCE hmod = (HINSTANCE)&__ImageBase;
     DWORD dwThreadId = Settings->GlobalHook ? 0 : GetCurrentThreadId();
 
+    HOOK_EVENT Event = { 0 };
+    Event.HookType = EVENT_HOOK;
+    Event_Push(Event);
     Settings->hHook = SetWindowsHookExW(idHook, lpfn, hmod, dwThreadId);
     return TRUE;
 }
@@ -231,6 +240,10 @@ HookDll_UninstallHook()
 
     if (Settings->hHook && Settings->HostProcess == GetCurrentProcessId())
     {
+        HOOK_EVENT Event = { 0 };
+        Event.HookType = EVENT_UNHOOK;
+        Event_Push(Event);
+
         UnhookWindowsHookEx(Settings->hHook);
         Settings->hHook = nullptr;
         Settings->IgnoreWnd = 0;

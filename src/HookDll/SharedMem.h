@@ -1,6 +1,6 @@
 #pragma once
 
-const auto MAX_EVENTS = 4096;
+const auto MAX_EVENTS = 4096 * 8;
 
 struct SHARED_MEM_QUEUE
 {

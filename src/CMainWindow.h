@@ -35,6 +35,7 @@ private:
     HWND m_hBack;
     HWND m_hNext;
     HWND m_hCancel;
+    HWND m_hMenu;
     int m_nShowCmd;
     LOGFONTW m_lfBoldGuiFont;
     LOGFONTW m_lfGuiFont;
@@ -42,6 +43,7 @@ private:
     std::unique_ptr<CFirstPage> m_pFirstPage;
     std::unique_ptr<CSecondPage> m_pSecondPage;
     std::unique_ptr<Gdiplus::Bitmap> m_pLogoBitmap;
+    HICON m_hCogIcon;
     std::wstring* m_pwstrHeader;
     std::wstring* m_pwstrSubHeader;
     WORD m_wCurrentDPI;
@@ -50,6 +52,8 @@ private:
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     void _OnBackButton();
     void _OnCancelButton();
+    void _OnMenuButton();
+    void _OnShowAtoms();
     LRESULT _OnCommand(WPARAM wParam);
     LRESULT _OnCreate();
     LRESULT _OnDestroy();

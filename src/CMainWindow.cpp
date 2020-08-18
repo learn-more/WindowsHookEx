@@ -10,9 +10,13 @@ static const int iHeaderHeight = 70;
 static const int iMinWindowHeight = 500;
 static const int iMinWindowWidth = 700;
 
-#define IDC_BACK        500
-#define IDC_NEXT        501
-#define IDC_CANCEL      502
+#define IDC_BACK            500
+#define IDC_NEXT            501
+#define IDC_CANCEL          502
+#define IDC_MENU            503
+
+#define IDC_MENU_VIEW_ATOMS 510
+#define IDC_MENU_ABOUT      511
 
 
 CMainWindow::CMainWindow(HINSTANCE hInstance, int nShowCmd)
@@ -62,6 +66,30 @@ CMainWindow::_OnCancelButton()
 }
 
 void
+CMainWindow::_OnMenuButton()
+{
+    HMENU hMenu = CreatePopupMenu();
+
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_VIEW_ATOMS, L"View Atoms");
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_ABOUT, L"About");
+
+    SetForegroundWindow(m_hWnd);
+    RECT rc;
+    GetWindowRect(m_hMenu, &rc);
+
+    TrackPopupMenuEx(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN, rc.right, rc.bottom, m_hWnd, NULL);
+
+    DestroyMenu(hMenu);
+}
+
+void
+CMainWindow::_OnShowAtoms()
+{
+
+}
+
+void
 CMainWindow::_OnNextButton()
 {
     if (m_pCurrentPage == m_pFirstPage.get())
@@ -83,6 +111,16 @@ CMainWindow::_OnCommand(WPARAM wParam)
         case IDC_BACK: _OnBackButton(); break;
         case IDC_NEXT: _OnNextButton(); break;
         case IDC_CANCEL: _OnCancelButton(); break;
+        case IDC_MENU: _OnMenuButton(); break;
+        case IDC_MENU_VIEW_ATOMS: _OnShowAtoms(); break;
+        case IDC_MENU_ABOUT:
+        {
+            WCHAR Buffer[200];
+            StringCchCopyW(Buffer, _countof(Buffer), wszAppName);
+            HICON hIcon = LoadIconW(m_hInstance, MAKEINTRESOURCEW(IDI_ICON));
+            ShellAboutW(m_hWnd, Buffer, L"WindowsHookEx is an utility created to study the behavior of SetWindowsHookEx", hIcon);
+        }
+        break;
     }
 
     return 0;
@@ -96,6 +134,7 @@ CMainWindow::_OnCreate()
 
     // Load resources.
     m_pLogoBitmap = LoadPNGAsGdiplusBitmap(m_hInstance, IDP_LOGO);
+    m_hCogIcon = (HICON)LoadImageW(m_hInstance, MAKEINTRESOURCEW(IDI_COG), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 
     // Create the main GUI font.
     m_lfGuiFont = { 0 };
@@ -123,6 +162,9 @@ CMainWindow::_OnCreate()
     std::wstring wstrCancel = LoadStringAsWstr(m_hInstance, IDS_CANCEL);
     m_hCancel = CreateWindowExW(0, WC_BUTTONW, wstrCancel.c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, m_hWnd, reinterpret_cast<HMENU>(IDC_CANCEL), nullptr, nullptr);
     SendMessageW(m_hCancel, WM_SETFONT, reinterpret_cast<WPARAM>(m_hGuiFont), MAKELPARAM(TRUE, 0));
+
+    m_hMenu = CreateWindowExW(0, WC_BUTTONW, L"", WS_CHILD | WS_VISIBLE | BS_BITMAP, 0, 0, 0, 0, m_hWnd, reinterpret_cast<HMENU>(IDC_MENU), nullptr, nullptr);
+    SendMessageW(m_hMenu, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)m_hCogIcon);
 
     // Create all pages.
     m_pFirstPage = CFirstPage::Create(this);
@@ -292,7 +334,7 @@ CMainWindow::_OnSize()
     InvalidateRect(m_hWnd, &rcHeader, FALSE);
 
     // Move the buttons.
-    HDWP hDwp = BeginDeferWindowPos(7);
+    HDWP hDwp = BeginDeferWindowPos(8);
 
     const int iControlPadding = DefaultControlPaddingPx();
     const int iButtonHeight = DefaultButtonHeightPx();
@@ -309,6 +351,11 @@ CMainWindow::_OnSize()
     iButtonX = iButtonX - iButtonWidth;
     if (hDwp)
         hDwp = DeferWindowPos(hDwp, m_hBack, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
+
+    iButtonX = rcWindow.left + iControlPadding;
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hMenu, nullptr, iButtonX, iButtonY, iButtonHeight, iButtonHeight, 0);
+
 
     // Move the line above the buttons.
     int iLineHeight = 2;

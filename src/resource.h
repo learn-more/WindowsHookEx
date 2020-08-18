@@ -7,6 +7,7 @@
 #pragma once
 
 #define IDI_ICON                        1
+#define IDI_COG                         2
 
 #define IDP_LOGO                        100
 

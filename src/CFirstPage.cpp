@@ -6,6 +6,7 @@
 
 #include "Wizard-2020.h"
 
+#define IDC_HOOKTYPE    500
 
 LRESULT
 CFirstPage::_OnCreate()
@@ -15,7 +16,7 @@ CFirstPage::_OnCreate()
     m_wstrSubHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_SUBHEADER);
  
     // Set up the ComboBox.
-    m_hComboHookType = CreateWindowExW(0, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    m_hComboHookType = CreateWindowExW(0, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, reinterpret_cast<HMENU>(IDC_HOOKTYPE), nullptr, nullptr);
 
     // Set up the radio boxes.
     std::wstring text = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_GLOBAL_HOOK);
@@ -100,9 +101,9 @@ CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 LRESULT
-CFirstPage::_OnCommand(WPARAM wParam, LPARAM lParam)
+CFirstPage::_OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
-    if (lParam == (LPARAM)m_hComboHookType)
+    if (LOWORD(wParam) == IDC_HOOKTYPE)
     {
         if (HIWORD(wParam) == CBN_SELCHANGE)
         {

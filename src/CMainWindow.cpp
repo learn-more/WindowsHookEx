@@ -299,30 +299,37 @@ CMainWindow::_OnSize()
     const int iButtonWidth = DefaultButtonWidthPx();
     int iButtonX = rcWindow.right - iControlPadding - iButtonWidth;
     int iButtonY = rcWindow.bottom - iControlPadding - iButtonHeight;
-    hDwp = DeferWindowPos(hDwp, m_hCancel, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hCancel, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
 
     iButtonX = iButtonX - iControlPadding - iButtonWidth;
-    hDwp = DeferWindowPos(hDwp, m_hNext, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hNext, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
 
     iButtonX = iButtonX - iButtonWidth;
-    hDwp = DeferWindowPos(hDwp, m_hBack, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hBack, nullptr, iButtonX, iButtonY, iButtonWidth, iButtonHeight, 0);
 
     // Move the line above the buttons.
     int iLineHeight = 2;
     int iLineWidth = rcWindow.right;
     int iLineX = 0;
     int iLineY = iButtonY - iControlPadding;
-    hDwp = DeferWindowPos(hDwp, m_hLine, nullptr, iLineX, iLineY, iLineWidth, iLineHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hLine, nullptr, iLineX, iLineY, iLineWidth, iLineHeight, 0);
 
     // Move all page windows.
     int iPageX = iControlPadding;
     int iPageY = rcHeader.bottom + iControlPadding;
     int iPageHeight = iLineY - iPageY - iControlPadding;
     int iPageWidth = rcWindow.right - iPageX - iControlPadding;
-    hDwp = DeferWindowPos(hDwp, m_pFirstPage->GetHwnd(), nullptr, iPageX, iPageY, iPageWidth, iPageHeight, 0);
-    hDwp = DeferWindowPos(hDwp, m_pSecondPage->GetHwnd(), nullptr, iPageX, iPageY, iPageWidth, iPageHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_pFirstPage->GetHwnd(), nullptr, iPageX, iPageY, iPageWidth, iPageHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_pSecondPage->GetHwnd(), nullptr, iPageX, iPageY, iPageWidth, iPageHeight, 0);
 
-    EndDeferWindowPos(hDwp);
+    if (hDwp)
+        EndDeferWindowPos(hDwp);
 
     return 0;
 }

@@ -243,6 +243,7 @@ CMainWindow::_OnPaint()
     int iDestBitmapY = iLogoPadding;
 
     Gdiplus::Graphics g(hMemDC);
+    g.SetInterpolationMode(Gdiplus::InterpolationModeHighQuality);
     g.DrawImage(m_pLogoBitmap.get(), iDestBitmapX, iDestBitmapY, iDestBitmapWidth, iDestBitmapHeight);
 
     // Fill the rest of the window with the window background color.

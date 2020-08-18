@@ -116,6 +116,7 @@ CSecondPage::SwitchTo()
 
     m_wstrHookType = LoadStringAsWstr(m_pMainWindow->GetHInstance(), Settings->GlobalHook ? IDS_GLOBAL_HOOK : IDS_LOCAL_HOOK);
 
+    m_wstrSubHeader.clear();
     _UpdateSubHeader();
 
     m_pMainWindow->EnableBackButton(TRUE);

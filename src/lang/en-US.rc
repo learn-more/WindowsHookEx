@@ -9,12 +9,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE
 BEGIN
     IDS_BACK                        "< Back"
-    IDS_NEXT                        "Next >"
-    IDS_CANCEL                      "Cancel"
+    IDS_NEXT                        "Hook >"
+    IDS_CANCEL                      "Close"
     IDS_FINISH                      "Unhook"
+    IDS_OK                          "OK"
 
     IDS_FIRSTPAGE_HEADER            "Select a hook type"
     IDS_FIRSTPAGE_SUBHEADER         "And configure the parameters."
+
+    IDS_ABOUT_TITLE                 "About %s"
+    IDS_ABOUT_SUBHEADER             "Copyright © 2020 Mark Jansen"
+    IDS_ABOUT_HEADER                "SetWindowsHookEx test utility"
+
     IDS_GLOBAL_HOOK                 "Global hook"
     IDS_LOCAL_HOOK                  "Local hook"
 

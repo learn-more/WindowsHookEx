@@ -10,7 +10,7 @@ const int iFontReferenceDPI = 72;
 const int iWindowsReferenceDPI = 96;
 
 // This could be turned into a constexpr std::wstring once C++20 support has landed.
-const WCHAR wszAppName[] = L"WindowsHookEx - Mark Jansen";
+const WCHAR wszAppName[] = L"WindowsHookEx";
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd)

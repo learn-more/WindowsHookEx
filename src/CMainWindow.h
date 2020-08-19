@@ -11,8 +11,10 @@ class CMainWindow
 public:
     WORD GetCurrentDPI() const { return m_wCurrentDPI; }
     HFONT GetGuiFont() const { return m_hGuiFont; }
+    HFONT GetBoldGuiFont() const { return m_hBoldGuiFont; }
     HINSTANCE GetHInstance() const { return m_hInstance; }
     HWND GetHwnd() const { return m_hWnd; }
+    Gdiplus::Bitmap* GetLogoBitmap() { return m_pLogoBitmap.get(); }
 
     int DefaultControlPaddingPx() const;
     int DefaultButtonHeightPx() const;
@@ -54,6 +56,7 @@ private:
     void _OnCancelButton();
     void _OnMenuButton();
     void _OnShowAtoms();
+    void _OnShowAbout();
     LRESULT _OnCommand(WPARAM wParam);
     LRESULT _OnCreate();
     LRESULT _OnDestroy();

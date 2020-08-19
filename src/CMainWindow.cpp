@@ -90,6 +90,16 @@ CMainWindow::_OnShowAtoms()
 }
 
 void
+CMainWindow::_OnShowAbout()
+{
+    auto ptr = CAboutWindow::Create(this);
+    if (ptr)
+    {
+        ptr->DoModal();
+    }
+}
+
+void
 CMainWindow::_OnNextButton()
 {
     if (m_pCurrentPage == m_pFirstPage.get())
@@ -113,14 +123,7 @@ CMainWindow::_OnCommand(WPARAM wParam)
         case IDC_CANCEL: _OnCancelButton(); break;
         case IDC_MENU: _OnMenuButton(); break;
         case IDC_MENU_VIEW_ATOMS: _OnShowAtoms(); break;
-        case IDC_MENU_ABOUT:
-        {
-            WCHAR Buffer[200];
-            StringCchCopyW(Buffer, _countof(Buffer), wszAppName);
-            HICON hIcon = LoadIconW(m_hInstance, MAKEINTRESOURCEW(IDI_ICON));
-            ShellAboutW(m_hWnd, Buffer, L"WindowsHookEx is an utility created to study the behavior of SetWindowsHookEx", hIcon);
-        }
-        break;
+        case IDC_MENU_ABOUT: _OnShowAbout(); break;
     }
 
     return 0;
@@ -474,7 +477,7 @@ CMainWindow::WorkLoop()
         if (bRet > 0)
         {
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageW(&msg);
         }
         else if (bRet == 0)
         {

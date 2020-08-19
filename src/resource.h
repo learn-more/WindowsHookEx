@@ -15,13 +15,19 @@
 #define IDS_NEXT                        1001
 #define IDS_CANCEL                      1002
 #define IDS_FINISH                      1003
+#define IDS_OK                          1004
 
-#define IDS_FIRSTPAGE_HEADER            2000
-#define IDS_FIRSTPAGE_SUBHEADER         2001
-#define IDS_GLOBAL_HOOK                 2002
-#define IDS_LOCAL_HOOK                  2003
+#define IDS_FIRSTPAGE_HEADER            1100
+#define IDS_FIRSTPAGE_SUBHEADER         1101
 
-#define IDS_PROCESS                     3000
-#define IDS_THREAD                      3001
-#define IDS_HOOK                        3002
-#define IDS_INFO                        3003
+#define IDS_ABOUT_TITLE                 1200
+#define IDS_ABOUT_HEADER                1201
+#define IDS_ABOUT_SUBHEADER             1202
+
+#define IDS_GLOBAL_HOOK                 1300
+#define IDS_LOCAL_HOOK                  1301
+
+#define IDS_PROCESS                     1400
+#define IDS_THREAD                      1401
+#define IDS_HOOK                        1402
+#define IDS_INFO                        1403

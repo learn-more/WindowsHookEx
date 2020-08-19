@@ -41,8 +41,9 @@ class CSecondPage;
 #include "HookDll/Shared.h"
 #include "CPage.h"
 #include "CFirstPage.h"
-#include "CMainWindow.h"
 #include "CSecondPage.h"
+#include "CAboutWindow.h"
+#include "CMainWindow.h"
 
 // Wizard-2020.cpp
 extern const int iFontReferenceDPI;

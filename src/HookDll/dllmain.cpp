@@ -1,4 +1,9 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
+//
+// WindowsHookEx - Test the behavior of the api SetWindowsHookEx
+// Copyright (c) 2020 Mark Jansen
+// SPDX-License-Identifier: MIT
+//
+
 #include "pch.h"
 #include "Shared.h"
 #include "SharedMem.h"

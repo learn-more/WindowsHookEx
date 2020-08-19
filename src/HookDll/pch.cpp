@@ -1,4 +1,9 @@
-// pch.cpp: source file corresponding to the pre-compiled header
+//
+// WindowsHookEx - Test the behavior of the api SetWindowsHookEx
+// Copyright (c) 2020 Mark Jansen
+// SPDX-License-Identifier: MIT
+//
+
 
 #include "pch.h"
 

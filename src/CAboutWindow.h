@@ -1,5 +1,7 @@
 //
-// Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
+// WindowsHookEx - Test the behavior of the api SetWindowsHookEx
+// Copyright (c) 2020 Mark Jansen
+// UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
 //
@@ -24,7 +26,6 @@ private:
     HWND m_hLine;
     HWND m_hOk;
     HWND m_hAbout;
-    //HWND m_hLink;
 
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;

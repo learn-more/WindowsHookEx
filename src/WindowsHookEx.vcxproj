@@ -192,6 +192,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CAboutWindow.cpp" />
+    <ClCompile Include="CAtomWindow.cpp" />
     <ClCompile Include="CFirstPage.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
     <ClCompile Include="CSecondPage.cpp" />
@@ -200,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CAboutWindow.h" />
+    <ClInclude Include="CAtomWindow.h" />
     <ClInclude Include="CFirstPage.h" />
     <ClInclude Include="CMainWindow.h" />
     <ClInclude Include="CPage.h" />

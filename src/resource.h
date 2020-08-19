@@ -26,10 +26,18 @@
 #define IDS_ABOUT_HEADER                1201
 #define IDS_ABOUT_SUBHEADER             1202
 
-#define IDS_GLOBAL_HOOK                 1300
-#define IDS_LOCAL_HOOK                  1301
+#define IDS_ATOM_TITLE                  1300
+#define IDS_ATOM_ID                     1301
+#define IDS_ATOM_TYPE                   1302
+#define IDS_ATOM_NAME                   1303
 
-#define IDS_PROCESS                     1400
-#define IDS_THREAD                      1401
-#define IDS_HOOK                        1402
-#define IDS_INFO                        1403
+#define IDS_GLOBAL_ATOM                 1310
+#define IDS_RWM_ATOM                    1311
+
+#define IDS_GLOBAL_HOOK                 1400
+#define IDS_LOCAL_HOOK                  1401
+
+#define IDS_PROCESS                     1500
+#define IDS_THREAD                      1501
+#define IDS_HOOK                        1502
+#define IDS_INFO                        1503

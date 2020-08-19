@@ -46,6 +46,7 @@ private:
     CPage* m_pCurrentPage;
     std::unique_ptr<CFirstPage> m_pFirstPage;
     std::unique_ptr<CSecondPage> m_pSecondPage;
+    std::unique_ptr<CAtomWindow> m_pAtomWindow;
     std::unique_ptr<Gdiplus::Bitmap> m_pLogoBitmap;
     HICON m_hCogIcon;
     std::wstring* m_pwstrHeader;
@@ -58,6 +59,7 @@ private:
     void _OnCancelButton();
     void _OnMenuButton();
     void _OnShowAtoms();
+    LRESULT _OnAtomWindowClosed();
     void _OnShowAbout();
     LRESULT _OnCommand(WPARAM wParam);
     LRESULT _OnCreate();

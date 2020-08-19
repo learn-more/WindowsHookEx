@@ -45,6 +45,7 @@ class CSecondPage;
 #include "CFirstPage.h"
 #include "CSecondPage.h"
 #include "CAboutWindow.h"
+#include "CAtomWindow.h"
 #include "CMainWindow.h"
 
 // Wizard-2020.cpp

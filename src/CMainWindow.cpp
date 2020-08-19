@@ -43,6 +43,7 @@ CMainWindow::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             case WM_GETMINMAXINFO: return pMainWindow->_OnGetMinMaxInfo(lParam);
             case WM_PAINT: return pMainWindow->_OnPaint();
             case WM_SIZE: return pMainWindow->_OnSize();
+            case WM_APP: return pMainWindow->_OnAtomWindowClosed();
         }
     }
 
@@ -72,7 +73,7 @@ CMainWindow::_OnMenuButton()
 {
     HMENU hMenu = CreatePopupMenu();
 
-    AppendMenuW(hMenu, MF_STRING, IDC_MENU_VIEW_ATOMS, L"View Atoms");
+    AppendMenuW(hMenu, MF_STRING | (m_pAtomWindow ? MF_CHECKED : 0), IDC_MENU_VIEW_ATOMS, L"View Atoms");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
     AppendMenuW(hMenu, MF_STRING, IDC_MENU_ABOUT, L"About");
 
@@ -85,10 +86,24 @@ CMainWindow::_OnMenuButton()
     DestroyMenu(hMenu);
 }
 
+LRESULT
+CMainWindow::_OnAtomWindowClosed()
+{
+    m_pAtomWindow.reset();
+    return 0;
+}
+
 void
 CMainWindow::_OnShowAtoms()
 {
-
+    if (m_pAtomWindow)
+    {
+        DestroyWindow(m_pAtomWindow->GetHwnd());
+    }
+    else
+    {
+        m_pAtomWindow = CAtomWindow::Create(this);
+    }
 }
 
 void

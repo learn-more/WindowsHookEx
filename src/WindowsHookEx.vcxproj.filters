@@ -29,6 +29,9 @@
     <ClCompile Include="Wizard-2020.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CAtomWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CAboutWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wizard-2020.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CAtomWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CAboutWindow.h">

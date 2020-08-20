@@ -16,6 +16,7 @@ public:
     virtual void OnBack() = 0;
     virtual void OnNext() = 0;
     virtual void UpdateDPI() = 0;
+    virtual void UpdateMenu(HMENU hMenu) { UNREFERENCED_PARAMETER(hMenu); }
 
 protected:
     CMainWindow* m_pMainWindow;

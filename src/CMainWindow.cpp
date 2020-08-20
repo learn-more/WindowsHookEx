@@ -36,7 +36,7 @@ CMainWindow::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (uMsg)
         {
-            case WM_COMMAND: return pMainWindow->_OnCommand(wParam);
+            case WM_COMMAND: return pMainWindow->_OnCommand(wParam, lParam);
             case WM_CREATE: return pMainWindow->_OnCreate();
             case WM_DESTROY: return pMainWindow->_OnDestroy();
             case WM_DPICHANGED: return pMainWindow->_OnDpiChanged(wParam, lParam);
@@ -72,6 +72,8 @@ void
 CMainWindow::_OnMenuButton()
 {
     HMENU hMenu = CreatePopupMenu();
+
+    m_pCurrentPage->UpdateMenu(hMenu);
 
     AppendMenuW(hMenu, MF_STRING | (m_pAtomWindow ? MF_CHECKED : 0), IDC_MENU_VIEW_ATOMS, L"View Atoms");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
@@ -131,8 +133,15 @@ CMainWindow::_OnNextButton()
 }
 
 LRESULT
-CMainWindow::_OnCommand(WPARAM wParam)
+CMainWindow::_OnCommand(WPARAM wParam, LPARAM lParam)
 {
+    // Is this a menu item?
+    if (lParam == 0 && HIWORD(wParam) == 0)
+    {
+        PostMessageW(m_pCurrentPage->GetHwnd(), WM_COMMAND, wParam, lParam);
+    }
+
+
     switch (LOWORD(wParam))
     {
         case IDC_BACK: _OnBackButton(); break;

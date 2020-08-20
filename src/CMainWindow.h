@@ -61,7 +61,7 @@ private:
     void _OnShowAtoms();
     LRESULT _OnAtomWindowClosed();
     void _OnShowAbout();
-    LRESULT _OnCommand(WPARAM wParam);
+    LRESULT _OnCommand(WPARAM wParam, LPARAM lParam);
     LRESULT _OnCreate();
     LRESULT _OnDestroy();
     LRESULT _OnDpiChanged(WPARAM wParam, LPARAM lParam);

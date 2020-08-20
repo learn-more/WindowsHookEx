@@ -10,6 +10,9 @@
 #include <cassert>
 #include "HookDll/Shared.h"
 
+#define IDC_MENU_CLEAR_LIST 600
+
+
 const static int g_ColumnWidths[] = {
     120,
     60,
@@ -98,6 +101,7 @@ CSecondPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             case WM_CREATE: return pPage->_OnCreate();
             case WM_DESTROY: return pPage->_OnDestroy();
+            case WM_COMMAND: return pPage->_OnCommand(wParam);
             case WM_SIZE: return pPage->_OnSize();
             case WM_TIMER: return pPage->OnTimer(wParam);
         }
@@ -180,6 +184,24 @@ CSecondPage::_UpdateSubHeader()
 void
 CSecondPage::UpdateDPI()
 {
+}
+
+void
+CSecondPage::UpdateMenu(HMENU hMenu)
+{
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_CLEAR_LIST, L"Clear list");
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+}
+
+LRESULT
+CSecondPage::_OnCommand(WPARAM wParam)
+{
+    switch (LOWORD(wParam))
+    {
+    case IDC_MENU_CLEAR_LIST: ListView_DeleteAllItems(m_hList); break;
+    }
+
+    return 0;
 }
 
 LRESULT

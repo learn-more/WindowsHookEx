@@ -8,7 +8,7 @@
 
 #include "Wizard-2020.h"
 
-#define IDC_HOOKTYPE    500
+#define IDC_HOOKTYPE    600
 
 LRESULT
 CFirstPage::_OnCreate()

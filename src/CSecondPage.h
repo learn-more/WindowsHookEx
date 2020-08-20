@@ -18,6 +18,7 @@ public:
     virtual void OnBack() override;
     virtual void OnNext() override;
     virtual void UpdateDPI() override;
+    virtual void UpdateMenu(HMENU hMenu) override;
 
     LRESULT OnTimer(WPARAM wParam);
 
@@ -39,6 +40,7 @@ private:
     void _UpdateSubHeader();
     LRESULT _OnCreate();
     LRESULT _OnDestroy();
+    LRESULT _OnCommand(WPARAM wParam);
     LRESULT _OnSize();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

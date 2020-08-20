@@ -43,7 +43,7 @@ class CAtomWindow
 public:
     HWND GetHwnd() const { return m_hWnd; }
     AtomInfo* FindAtomInfo(ATOM Id, AtomTable Table) const;
-    void UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate);
+    void UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate, int& ensureVisible);
     int FindAtomIndex(const AtomInfo* Info);
 
     static std::unique_ptr<CAtomWindow> Create(CMainWindow* pMainWindow);

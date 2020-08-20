@@ -13,7 +13,7 @@ static const int iMinWindowHeight = 400;
 static const int iMinWindowWidth = 500;
 static ATOM g_AtomWndAtom = 0;
 
-static int g_ColumnWidths[] = {
+const static int g_ColumnWidths[] = {
     60,
     60,
 };
@@ -70,6 +70,14 @@ CAtomWindow::_OnCreate()
     wstrColumn = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_ATOM_NAME);
     lvColumn.pszText = wstrColumn.data();
     ListView_InsertColumn(m_hList, m_nColumns++, &lvColumn);
+
+    // Adjust the list column widths.
+    for (int n = 0; n < m_nColumns - 1; ++n)
+    {
+        assert(n < _countof(g_ColumnWidths));
+        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
+    }
+    ListView_SetColumnWidth(m_hList, m_nColumns -1, LVSCW_AUTOSIZE);
 
     // Set the window size.
     int iHeight = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
@@ -149,16 +157,6 @@ CAtomWindow::_OnSize()
     if (hDwp)
         EndDeferWindowPos(hDwp);
 
-    // Adjust the list column widths.
-    LONG lColumnWidth = iListWidth - (GetSystemMetrics(SM_CXVSCROLL) + 4);
-    for (int n = 0; n < m_nColumns - 1; ++n)
-    {
-        assert(n < _countof(g_ColumnWidths));
-        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
-        lColumnWidth -= g_ColumnWidths[n];
-    }
-    ListView_SetColumnWidth(m_hList, m_nColumns - 1, lColumnWidth);
-
     return 0;
 }
 
@@ -171,13 +169,14 @@ CAtomWindow::_OnTimer(WPARAM wParam)
     {
         SetWindowRedraw(m_hList, FALSE);
         bool invalidate = false;
+        int ensureVisible = -1;
 
         for (UINT n = 0xC000; n <= 0xffff; ++n)
         {
             UINT res = GlobalGetAtomNameW((ATOM)n, Buffer, _countof(Buffer));
             if (res)
             {
-                UpdateAtom((ATOM)n, AtomTable::Global, std::wstring(Buffer, res), invalidate);
+                UpdateAtom((ATOM)n, AtomTable::Global, std::wstring(Buffer, res), invalidate, ensureVisible);
             }
         }
         for (UINT n = 0xC000; n <= 0xffff; ++n)
@@ -185,7 +184,7 @@ CAtomWindow::_OnTimer(WPARAM wParam)
             UINT res = GetClipboardFormatNameW(n, Buffer, _countof(Buffer));
             if (res)
             {
-                UpdateAtom((ATOM)n, AtomTable::User, std::wstring(Buffer, res), invalidate);
+                UpdateAtom((ATOM)n, AtomTable::User, std::wstring(Buffer, res), invalidate, ensureVisible);
             }
         }
 
@@ -201,9 +200,6 @@ CAtomWindow::_OnTimer(WPARAM wParam)
                     {
                         ListView_DeleteItem(m_hList, index);
                     }
-                    OutputDebugStringW(L"Removed: ");
-                    OutputDebugStringW(Info->Name.c_str());
-                    OutputDebugStringW(L"\n");
                     it = m_Atoms.erase(it);
                     continue;
                 }
@@ -219,6 +215,11 @@ CAtomWindow::_OnTimer(WPARAM wParam)
             it++;
         }
 
+        if (ensureVisible >= 0)
+        {
+            ListView_SetColumnWidth(m_hList, m_nColumns - 1, LVSCW_AUTOSIZE);
+            ListView_EnsureVisible(m_hList, ensureVisible, FALSE);
+        }
         SetWindowRedraw(m_hList, TRUE);
         if (invalidate)
         {
@@ -254,7 +255,7 @@ CAtomWindow::FindAtomIndex(const AtomInfo* Info)
 }
 
 void
-CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate)
+CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate, int& ensureVisible)
 {
     AtomInfo* Info = FindAtomInfo(Id, Table);
     if (Info)
@@ -264,10 +265,8 @@ CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool
             Info->Name = Name;
             Info->State = AtomState::Changed;
             invalidate = true;
-            OutputDebugStringW(L"Changed: ");
-            OutputDebugStringW(Info->Name.c_str());
-            OutputDebugStringW(L"\n");
-
+            if (ensureVisible < 0)
+                ensureVisible = FindAtomIndex(Info);
         }
         else if (Info->State != AtomState::Present)
         {
@@ -279,9 +278,6 @@ CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool
     else
     {
         m_Atoms.push_back(std::unique_ptr<AtomInfo>(new AtomInfo{ Id, Table, Name, AtomState::Added, m_Update }));
-        OutputDebugStringW(L"Added: ");
-        OutputDebugStringW(Name.c_str());
-        OutputDebugStringW(L"\n");
 
         LVITEMW lvI = { 0 };
         lvI.mask = LVIF_TEXT | LVIF_PARAM;
@@ -289,6 +285,7 @@ CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool
         lvI.lParam = reinterpret_cast<LPARAM>(m_Atoms.back().get());
         lvI.iItem = INT_MAX;
         lvI.iItem = ListView_InsertItem(m_hList, &lvI);
+        ensureVisible = lvI.iItem;
     }
 }
 

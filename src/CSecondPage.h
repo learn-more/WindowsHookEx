@@ -19,7 +19,6 @@ public:
     virtual void OnNext() override;
     virtual void UpdateDPI() override;
 
-    LRESULT OnDestroy();
     LRESULT OnTimer(WPARAM wParam);
 
 private:
@@ -39,6 +38,7 @@ private:
     CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     void _UpdateSubHeader();
     LRESULT _OnCreate();
+    LRESULT _OnDestroy();
     LRESULT _OnSize();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

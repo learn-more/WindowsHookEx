@@ -10,7 +10,7 @@
 #include <cassert>
 #include "HookDll/Shared.h"
 
-static int g_ColumnWidths[] = {
+const static int g_ColumnWidths[] = {
     120,
     60,
     150
@@ -44,6 +44,14 @@ CSecondPage::_OnCreate()
     lvColumn.pszText = wstrColumn.data();
     ListView_InsertColumn(m_hList, m_nColumns++, &lvColumn);
 
+    // Adjust the list column widths.
+    for (int n = 0; n < m_nColumns - 1; ++n)
+    {
+        assert(n < _countof(g_ColumnWidths));
+        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
+    }
+    ListView_SetColumnWidth(m_hList, m_nColumns - 1, LVSCW_AUTOSIZE);
+
     m_Events.resize(100);
     SetTimer(m_hWnd, 0x1234, 200, nullptr);
 
@@ -51,9 +59,8 @@ CSecondPage::_OnCreate()
 }
 
 LRESULT
-CSecondPage::OnDestroy()
+CSecondPage::_OnDestroy()
 {
-
     HookDll_UninstallHook();
 
     return 0;
@@ -77,16 +84,6 @@ CSecondPage::_OnSize()
 
     EndDeferWindowPos(hDwp);
 
-    // Adjust the list column widths.
-    LONG lColumnWidth = iListWidth - (GetSystemMetrics(SM_CXVSCROLL) + 4);
-    for (int n = 0; n < m_nColumns - 1; ++n)
-    {
-        assert(n < _countof(g_ColumnWidths));
-        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
-        lColumnWidth -= g_ColumnWidths[n];
-    }
-    ListView_SetColumnWidth(m_hList, m_nColumns-1, lColumnWidth);
-
     return 0;
 }
 
@@ -100,7 +97,7 @@ CSecondPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (uMsg)
         {
             case WM_CREATE: return pPage->_OnCreate();
-            case WM_DESTROY: return pPage->OnDestroy();
+            case WM_DESTROY: return pPage->_OnDestroy();
             case WM_SIZE: return pPage->_OnSize();
             case WM_TIMER: return pPage->OnTimer(wParam);
         }
@@ -261,6 +258,7 @@ CSecondPage::OnTimer(WPARAM wParam)
         }
         if (last >= 0)
         {
+            ListView_SetColumnWidth(m_hList, m_nColumns - 1, LVSCW_AUTOSIZE);
             SetWindowRedraw(m_hList, TRUE);
             ListView_EnsureVisible(m_hList, last, TRUE);
         }

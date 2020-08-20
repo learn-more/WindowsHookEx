@@ -25,11 +25,11 @@ BEGIN
 
     IDS_ATOM_TITLE                  "System Atoms"
     IDS_ATOM_ID                     "Atom"
-    IDS_ATOM_TYPE                   "Type"
+    IDS_ATOM_TABLE                  "Table"
     IDS_ATOM_NAME                   "Name"
 
     IDS_GLOBAL_ATOM                 "Global"
-    IDS_RWM_ATOM                    "RWM"
+    IDS_USER_ATOM                   "User"
 
     IDS_GLOBAL_HOOK                 "Global hook"
     IDS_LOCAL_HOOK                  "Local hook"

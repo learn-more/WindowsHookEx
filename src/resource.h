@@ -28,11 +28,11 @@
 
 #define IDS_ATOM_TITLE                  1300
 #define IDS_ATOM_ID                     1301
-#define IDS_ATOM_TYPE                   1302
+#define IDS_ATOM_TABLE                  1302
 #define IDS_ATOM_NAME                   1303
 
 #define IDS_GLOBAL_ATOM                 1310
-#define IDS_RWM_ATOM                    1311
+#define IDS_USER_ATOM                   1311
 
 #define IDS_GLOBAL_HOOK                 1400
 #define IDS_LOCAL_HOOK                  1401

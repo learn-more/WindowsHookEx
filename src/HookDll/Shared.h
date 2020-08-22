@@ -25,6 +25,7 @@ struct SHARED_SETTINGS
     BOOL BreakOnFirstEvent;
 };
 
+#define CUSTOM_EVENTS_START 100
 #define EVENT_DLL_LOAD      100
 #define EVENT_DLL_UNLOAD    101
 #define EVENT_HOOK          102

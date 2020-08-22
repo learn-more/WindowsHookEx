@@ -126,7 +126,10 @@ CSecondPage::SwitchTo()
     m_pMainWindow->EnableNextButton(TRUE, IDS_FINISH);
     ShowWindow(m_hWnd, SW_SHOW);
 
-    Settings->IgnoreWnd = m_hWnd;
+    // First page asked us to fill this in.
+    if (Settings->IgnoreWnd == (HWND)TRUE)
+        Settings->IgnoreWnd = m_hWnd;
+
     HookDll_InstallHook();
     m_Active = true;
 }

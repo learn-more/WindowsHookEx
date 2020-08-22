@@ -22,6 +22,11 @@
 #define IDS_FIRSTPAGE_HEADER            1100
 #define IDS_FIRSTPAGE_SUBHEADER         1101
 
+#define IDS_OPT_IGNORE_OWN_MSG          1110
+#define IDS_OPT_BREAK_ON_LOAD           1111
+#define IDS_OPT_BREAK_ON_FIRST_MSG      1112
+
+
 #define IDS_ABOUT_TITLE                 1200
 #define IDS_ABOUT_HEADER                1201
 #define IDS_ABOUT_SUBHEADER             1202

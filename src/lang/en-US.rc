@@ -16,8 +16,12 @@ BEGIN
     IDS_FINISH                      "Unhook"
     IDS_OK                          "OK"
 
-    IDS_FIRSTPAGE_HEADER            "Select a hook type"
-    IDS_FIRSTPAGE_SUBHEADER         "And configure the parameters."
+    IDS_FIRSTPAGE_HEADER            "Select a configuration"
+    IDS_FIRSTPAGE_SUBHEADER         "Specify the hook type, and additional options"
+
+    IDS_OPT_IGNORE_OWN_MSG          "Ignore hook messages for the result page (recommended)"
+    IDS_OPT_BREAK_ON_LOAD           "Break into the debugger when the hook dll is loaded"
+    IDS_OPT_BREAK_ON_FIRST_MSG      "Break into the debugger when the first hook callback is executed"
 
     IDS_ABOUT_TITLE                 "About %s"
     IDS_ABOUT_SUBHEADER             "Copyright © 2020 Mark Jansen"

@@ -27,6 +27,10 @@ private:
     HWND m_hRadioGlobal;
     HWND m_hRadioLocal;
 
+    HWND m_hIgnoreOwnMsg;
+    HWND m_hBreakOnDllLoad;
+    HWND m_hBreakOnFirstMsg;
+
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;
 

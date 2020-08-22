@@ -13,18 +13,29 @@
 LRESULT
 CFirstPage::_OnCreate()
 {
+    HINSTANCE hInstance = m_pMainWindow->GetHInstance();
+
     // Load resources.
-    m_wstrHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_HEADER);
-    m_wstrSubHeader = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_FIRSTPAGE_SUBHEADER);
+    m_wstrHeader = LoadStringAsWstr(hInstance, IDS_FIRSTPAGE_HEADER);
+    m_wstrSubHeader = LoadStringAsWstr(hInstance, IDS_FIRSTPAGE_SUBHEADER);
  
     // Set up the ComboBox.
     m_hComboHookType = CreateWindowExW(0, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, reinterpret_cast<HMENU>(IDC_HOOKTYPE), nullptr, nullptr);
 
     // Set up the radio boxes.
-    std::wstring text = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_GLOBAL_HOOK);
+    std::wstring text = LoadStringAsWstr(hInstance, IDS_GLOBAL_HOOK);
     m_hRadioGlobal = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
-    text = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_LOCAL_HOOK);
+    text = LoadStringAsWstr(hInstance, IDS_LOCAL_HOOK);
     m_hRadioLocal = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+
+    // Set up the check boxes (options).
+
+    text = LoadStringAsWstr(hInstance, IDS_OPT_IGNORE_OWN_MSG);
+    m_hIgnoreOwnMsg = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_LOAD);
+    m_hBreakOnDllLoad = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_FIRST_MSG);
+    m_hBreakOnFirstMsg = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
 
     // Set all fonts
     UpdateDPI();
@@ -46,6 +57,7 @@ CFirstPage::_OnCreate()
     }
 
     Button_SetCheck(m_hRadioGlobal, BST_CHECKED);
+    Button_SetCheck(m_hIgnoreOwnMsg, BST_CHECKED);
 
     return 0;
 }
@@ -59,27 +71,47 @@ CFirstPage::_OnSize()
 
     // The text is drawn on most of the window, so invalidate that.
     InvalidateRect(m_hWnd, &rcWindow, TRUE);
-    // Move the list control.
-    HDWP hDwp = BeginDeferWindowPos(3);
 
     const int iControlPadding = m_pMainWindow->DefaultControlPaddingPx();
     const int iButtonHeight = m_pMainWindow->DefaultButtonHeightPx();
     //const int iButtonWidth = m_pMainWindow->DefaultButtonWidthPx();
 
+    HDWP hDwp = BeginDeferWindowPos(6);
+
+    // Move the combobox.
     int iControlX = 0;
     int iControlY = 0;
     int iControlWidth = rcWindow.right / 3 - iControlPadding / 2;
-    int iControlHeight = iButtonHeight;
-    hDwp = DeferWindowPos(hDwp, m_hComboHookType, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hComboHookType, nullptr, iControlX, iControlY, iControlWidth, iButtonHeight, 0);
 
+    // Move the radio buttons.
     iControlX = rcWindow.right / 3 + iControlPadding / 2;
     iControlWidth = rcWindow.right / 3 - iControlPadding;
-    hDwp = DeferWindowPos(hDwp, m_hRadioGlobal, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hRadioGlobal, nullptr, iControlX, iControlY, iControlWidth, iButtonHeight, 0);
 
-    iControlY = iControlHeight;
-    hDwp = DeferWindowPos(hDwp, m_hRadioLocal, nullptr, iControlX, iControlY, iControlWidth, iControlHeight, 0);
+    iControlY = iButtonHeight;
+    if (hDwp)
+        hDwp = DeferWindowPos(hDwp, m_hRadioLocal, nullptr, iControlX, iControlY, iControlWidth, iButtonHeight, 0);
 
-    EndDeferWindowPos(hDwp);
+    // Move the checkboxes
+    const int iCheckX = 0;
+    int iCheckY = iControlY * 3;
+    const int iCheckWidth = rcWindow.right;
+
+    HWND hCheckboxes[] = { m_hIgnoreOwnMsg, m_hBreakOnDllLoad, m_hBreakOnFirstMsg };
+
+    for (HWND hCheckbox : hCheckboxes)
+    {
+        if (hDwp)
+            hDwp = DeferWindowPos(hDwp, hCheckbox, nullptr, iCheckX, iCheckY, iCheckWidth, iButtonHeight, 0);
+
+        iCheckY += iButtonHeight;
+    }
+
+    if (hDwp)
+        EndDeferWindowPos(hDwp);
 
     return 0;
 }
@@ -142,9 +174,20 @@ CFirstPage::OnBack()
 void
 CFirstPage::OnNext()
 {
+    // Configure hook type.
     int index = ComboBox_GetCurSel(m_hComboHookType);
     m_Settings->idHook = ComboBox_GetItemData(m_hComboHookType, index);
     m_Settings->GlobalHook = Button_GetCheck(m_hRadioGlobal) == BST_CHECKED;
+
+    // We don't know the hWnd of the second page, so put a sentinel in place,
+    // so that the second page can fill in the correct value
+    if (Button_GetCheck(m_hIgnoreOwnMsg) == BST_CHECKED)
+        m_Settings->IgnoreWnd = (HWND)TRUE;
+    else
+        m_Settings->IgnoreWnd = 0;
+
+    m_Settings->BreakOnLoad = Button_GetCheck(m_hBreakOnDllLoad) == BST_CHECKED;
+    m_Settings->BreakOnFirstEvent = Button_GetCheck(m_hBreakOnFirstMsg) == BST_CHECKED;
 }
 
 void
@@ -153,8 +196,18 @@ CFirstPage::UpdateDPI()
     HFONT hGuiFont = m_pMainWindow->GetGuiFont();
 
     // Update the control fonts.
-    SendMessageW(m_hComboHookType, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
-    SendMessageW(m_hRadioGlobal, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
-    SendMessageW(m_hRadioLocal, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
+    HWND hControls[] = {
+        m_hComboHookType,
+        m_hRadioGlobal,
+        m_hRadioLocal,
+        m_hIgnoreOwnMsg,
+        m_hBreakOnDllLoad,
+        m_hBreakOnFirstMsg,
+    };
+
+    for (HWND hControl : hControls)
+    {
+        SendMessageW(hControl, WM_SETFONT, reinterpret_cast<WPARAM>(hGuiFont), MAKELPARAM(TRUE, 0));
+    }
 }
 

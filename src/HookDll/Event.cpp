@@ -8,6 +8,8 @@
 #include "Shared.h"
 #include "SharedMem.h"
 
+static BOOL g_fHitFirstEvent = FALSE;
+
 bool Event_Ignored(HWND hWnd)
 {
     HWND hIgnore = SharedMem_Pointer()->Settings.IgnoreWnd;
@@ -44,6 +46,20 @@ void Queue_Unlock(SHARED_MEM_QUEUE* queue)
 void Event_Push(HOOK_EVENT& event)
 {
     SHARED_MEM* Mem = SharedMem_Pointer();
+
+    if (Mem->Settings.BreakOnLoad &&
+        event.HookType == EVENT_DLL_LOAD)
+    {
+        __debugbreak();
+    }
+
+    if (Mem->Settings.BreakOnFirstEvent &&
+        !g_fHitFirstEvent &&
+        event.HookType < CUSTOM_EVENTS_START)
+    {
+        g_fHitFirstEvent = TRUE;
+        __debugbreak();
+    }
 
     event.ProcessId = GetCurrentProcessId();
     event.ThreadId = GetCurrentThreadId();

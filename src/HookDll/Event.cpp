@@ -11,8 +11,9 @@
 bool Event_Ignored(HWND hWnd)
 {
     HWND hIgnore = SharedMem_Pointer()->Settings.IgnoreWnd;
-    return hWnd == hIgnore ||
-        IsChild(hIgnore, hWnd);
+    return hIgnore &&
+        (hWnd == hIgnore ||
+        IsChild(hIgnore, hWnd));
 }
 
 bool Queue_Lock(SHARED_MEM_QUEUE* queue, UINT* FailureCounter)
@@ -42,10 +43,12 @@ void Queue_Unlock(SHARED_MEM_QUEUE* queue)
 
 void Event_Push(HOOK_EVENT& event)
 {
+    SHARED_MEM* Mem = SharedMem_Pointer();
+
     event.ProcessId = GetCurrentProcessId();
     event.ThreadId = GetCurrentThreadId();
 
-    SHARED_MEM_QUEUE* queue = &SharedMem_Pointer()->Queue;
+    SHARED_MEM_QUEUE* queue = &Mem->Queue;
 
     if (!Queue_Lock(queue, &queue->WriteAbort))
         return;

@@ -17,16 +17,12 @@
 
 struct SHARED_SETTINGS
 {
-    // Settings for the 'Current' hook
     int idHook;
     BOOL GlobalHook;
-
-    // 
-    DWORD HostProcess;
-    HHOOK hHook;
     HWND IgnoreWnd;
 
-    LONG NumberOfDllsLoaded;
+    BOOL BreakOnLoad;
+    BOOL BreakOnFirstEvent;
 };
 
 #define EVENT_DLL_LOAD      100

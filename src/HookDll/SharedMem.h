@@ -19,9 +19,18 @@ struct SHARED_MEM_QUEUE
     HOOK_EVENT Events[MAX_EVENTS];
 };
 
+struct SHARED_COMMON
+{
+    DWORD HostProcess;
+    HHOOK hHook;
+
+    LONG NumberOfDllsLoaded;
+};
+
 struct SHARED_MEM
 {
     SHARED_SETTINGS Settings;
+    SHARED_COMMON Common;
     SHARED_MEM_QUEUE Queue;
 };
 

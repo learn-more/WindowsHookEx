@@ -39,18 +39,18 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
     BOOL fIsFirst = FALSE;
     HOOK_EVENT Event = { 0 };
 
-    SHARED_SETTINGS* Settings;
+    SHARED_MEM* Mem;
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
         SharedMem_Open(fIsFirst);
-        Settings = &SharedMem_Pointer()->Settings;
-        InterlockedIncrement(&Settings->NumberOfDllsLoaded);
+        Mem = SharedMem_Pointer();
+        InterlockedIncrement(&Mem->Common.NumberOfDllsLoaded);
 
         if (fIsFirst)
         {
-            Settings->idHook = WH_CBT;
-            Settings->HostProcess = GetCurrentProcessId();
+            Mem->Settings.idHook = WH_CBT;
+            Mem->Common.HostProcess = GetCurrentProcessId();
         }
 
         g_ProcessName = getModuleFilename(NULL);
@@ -69,13 +69,13 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
     case DLL_THREAD_DETACH:
         break;
     case DLL_PROCESS_DETACH:
-        Settings = &SharedMem_Pointer()->Settings;
-        if (Settings->HostProcess == GetCurrentProcessId())
+        Mem = SharedMem_Pointer();
+        if (Mem->Common.HostProcess == GetCurrentProcessId())
         {
-            Settings->HostProcess = 0;
+            Mem->Common.HostProcess = 0;
         }
 
-        InterlockedDecrement(&Settings->NumberOfDllsLoaded);
+        InterlockedDecrement(&Mem->Common.NumberOfDllsLoaded);
 
         Event.HookType = EVENT_DLL_UNLOAD;
         StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), g_ProcessName.c_str());

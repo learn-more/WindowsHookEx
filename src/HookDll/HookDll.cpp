@@ -189,7 +189,7 @@ HookDll_FormatMiscInfo(LPWSTR pszDest, size_t cchDest)
     STRSAFE_LPWSTR pszDestEnd;
     size_t cchRemaining;
 
-    StringCchPrintfExW(pszDest, cchDest, &pszDestEnd, &cchRemaining, 0, L"External instances: %d", Ptr->Settings.NumberOfDllsLoaded - 1);
+    StringCchPrintfExW(pszDest, cchDest, &pszDestEnd, &cchRemaining, 0, L"External instances: %d", Ptr->Common.NumberOfDllsLoaded - 1);
 
     if (Ptr->Queue.Dropped)
     {
@@ -212,12 +212,12 @@ BOOL
 HOOKDLL_DECLSPEC
 HookDll_InstallHook(void)
 {
-    SHARED_SETTINGS* Settings = &SharedMem_Pointer()->Settings;
+    SHARED_MEM* Mem = SharedMem_Pointer();
 
-    if (Settings->hHook != nullptr)
+    if (Mem->Common.hHook != nullptr)
         return FALSE;
 
-    int idHook = Settings->idHook;
+    int idHook = Mem->Settings.idHook;
     HOOK_INFO* hookInfo = GetHookInfo(idHook);
 
     if (!hookInfo)
@@ -227,12 +227,12 @@ HookDll_InstallHook(void)
 
     HOOKPROC lpfn = hookInfo->lpFn;
     HINSTANCE hmod = (HINSTANCE)&__ImageBase;
-    DWORD dwThreadId = Settings->GlobalHook ? 0 : GetCurrentThreadId();
+    DWORD dwThreadId = Mem->Settings.GlobalHook ? 0 : GetCurrentThreadId();
 
     HOOK_EVENT Event = { 0 };
     Event.HookType = EVENT_HOOK;
     Event_Push(Event);
-    Settings->hHook = SetWindowsHookExW(idHook, lpfn, hmod, dwThreadId);
+    Mem->Common.hHook = SetWindowsHookExW(idHook, lpfn, hmod, dwThreadId);
     return TRUE;
 }
 
@@ -242,17 +242,16 @@ VOID
 HOOKDLL_DECLSPEC
 HookDll_UninstallHook()
 {
-    SHARED_SETTINGS* Settings = &SharedMem_Pointer()->Settings;
+    SHARED_MEM* Mem = SharedMem_Pointer();
 
-    if (Settings->hHook && Settings->HostProcess == GetCurrentProcessId())
+    if (Mem->Common.hHook && Mem->Common.HostProcess == GetCurrentProcessId())
     {
         HOOK_EVENT Event = { 0 };
         Event.HookType = EVENT_UNHOOK;
         Event_Push(Event);
 
-        UnhookWindowsHookEx(Settings->hHook);
-        Settings->hHook = nullptr;
-        Settings->IgnoreWnd = 0;
+        UnhookWindowsHookEx(Mem->Common.hHook);
+        Mem->Common.hHook = nullptr;
     }
 }
 

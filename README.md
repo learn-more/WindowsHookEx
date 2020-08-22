@@ -6,3 +6,4 @@ A utility designed to investigate the behavior of the Windows api 'SetWindowsHoo
 
 The UI is based on the [Wizard-2020 Project](https://github.com/enlyze/Wizard-2020/) from Enlyze
 
+![Logo](src/res/logo.png)

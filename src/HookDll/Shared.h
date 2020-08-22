@@ -22,6 +22,7 @@ struct SHARED_SETTINGS
     HWND IgnoreWnd;
 
     BOOL BreakOnLoad;
+    BOOL BreakOnUnload;
     BOOL BreakOnFirstEvent;
 };
 

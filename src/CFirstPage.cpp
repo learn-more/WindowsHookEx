@@ -34,6 +34,8 @@ CFirstPage::_OnCreate()
     m_hIgnoreOwnMsg = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_LOAD);
     m_hBreakOnDllLoad = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
+    text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_UNLOAD);
+    m_hBreakOnDllUnload = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_FIRST_MSG);
     m_hBreakOnFirstMsg = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
 
@@ -63,6 +65,15 @@ CFirstPage::_OnCreate()
 }
 
 LRESULT
+CFirstPage::_OnDestroy()
+{
+    // Ensure we do not break while shutting down!
+    m_Settings->BreakOnUnload = FALSE;
+
+    return 0;
+}
+
+LRESULT
 CFirstPage::_OnSize()
 {
     // Get the window size.
@@ -76,7 +87,7 @@ CFirstPage::_OnSize()
     const int iButtonHeight = m_pMainWindow->DefaultButtonHeightPx();
     //const int iButtonWidth = m_pMainWindow->DefaultButtonWidthPx();
 
-    HDWP hDwp = BeginDeferWindowPos(6);
+    HDWP hDwp = BeginDeferWindowPos(7);
 
     // Move the combobox.
     int iControlX = 0;
@@ -100,7 +111,7 @@ CFirstPage::_OnSize()
     int iCheckY = iControlY * 3;
     const int iCheckWidth = rcWindow.right;
 
-    HWND hCheckboxes[] = { m_hIgnoreOwnMsg, m_hBreakOnDllLoad, m_hBreakOnFirstMsg };
+    HWND hCheckboxes[] = { m_hIgnoreOwnMsg, m_hBreakOnDllLoad, m_hBreakOnDllUnload, m_hBreakOnFirstMsg };
 
     for (HWND hCheckbox : hCheckboxes)
     {
@@ -126,6 +137,7 @@ CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (uMsg)
         {
             case WM_CREATE: return pPage->_OnCreate();
+            case WM_DESTROY: return pPage->_OnDestroy();
             case WM_SIZE: return pPage->_OnSize();
             case WM_COMMAND: return pPage->_OnCommand(wParam, lParam);
         }
@@ -187,6 +199,7 @@ CFirstPage::OnNext()
         m_Settings->IgnoreWnd = 0;
 
     m_Settings->BreakOnLoad = Button_GetCheck(m_hBreakOnDllLoad) == BST_CHECKED;
+    m_Settings->BreakOnUnload = Button_GetCheck(m_hBreakOnDllUnload) == BST_CHECKED;
     m_Settings->BreakOnFirstEvent = Button_GetCheck(m_hBreakOnFirstMsg) == BST_CHECKED;
 }
 
@@ -202,6 +215,7 @@ CFirstPage::UpdateDPI()
         m_hRadioLocal,
         m_hIgnoreOwnMsg,
         m_hBreakOnDllLoad,
+        m_hBreakOnDllUnload,
         m_hBreakOnFirstMsg,
     };
 

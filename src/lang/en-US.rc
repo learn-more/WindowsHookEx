@@ -21,6 +21,7 @@ BEGIN
 
     IDS_OPT_IGNORE_OWN_MSG          "Ignore hook messages for the result page (recommended)"
     IDS_OPT_BREAK_ON_LOAD           "Break into the debugger when the hook dll is loaded"
+    IDS_OPT_BREAK_ON_UNLOAD         "Break into the debugger when the hook dll is unloaded"
     IDS_OPT_BREAK_ON_FIRST_MSG      "Break into the debugger when the first hook callback is executed"
 
     IDS_ABOUT_TITLE                 "About %s"

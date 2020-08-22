@@ -24,7 +24,8 @@
 
 #define IDS_OPT_IGNORE_OWN_MSG          1110
 #define IDS_OPT_BREAK_ON_LOAD           1111
-#define IDS_OPT_BREAK_ON_FIRST_MSG      1112
+#define IDS_OPT_BREAK_ON_UNLOAD         1112
+#define IDS_OPT_BREAK_ON_FIRST_MSG      1113
 
 
 #define IDS_ABOUT_TITLE                 1200

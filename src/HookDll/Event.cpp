@@ -50,14 +50,26 @@ void Event_Push(HOOK_EVENT& event)
     if (Mem->Settings.BreakOnLoad &&
         event.HookType == EVENT_DLL_LOAD)
     {
+        OutputDebugStringA("Breaking on EVENT_DLL_LOAD\r\n");
         __debugbreak();
     }
+
+    if (Mem->Settings.BreakOnUnload &&
+        event.HookType == EVENT_DLL_UNLOAD)
+    {
+        OutputDebugStringA("Breaking on EVENT_DLL_UNLOAD\r\n");
+        __debugbreak();
+    }
+
+    if (event.HookType == EVENT_HOOK)
+        g_fHitFirstEvent = FALSE;
 
     if (Mem->Settings.BreakOnFirstEvent &&
         !g_fHitFirstEvent &&
         event.HookType < CUSTOM_EVENTS_START)
     {
         g_fHitFirstEvent = TRUE;
+        OutputDebugStringA("Breaking on first event\r\n");
         __debugbreak();
     }
 

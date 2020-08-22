@@ -29,6 +29,7 @@ private:
 
     HWND m_hIgnoreOwnMsg;
     HWND m_hBreakOnDllLoad;
+    HWND m_hBreakOnDllUnload;
     HWND m_hBreakOnFirstMsg;
 
     std::wstring m_wstrHeader;
@@ -38,6 +39,7 @@ private:
 
     CFirstPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();
+    LRESULT _OnDestroy();
     LRESULT _OnSize();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

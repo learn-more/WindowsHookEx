@@ -129,52 +129,102 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
     switch (Event->HookType)
     {
     case WH_KEYBOARD:
-        StringCchPrintfW(pszDest, cchDest, L"nCode=%d, vk=%d, lParam=%p", hook.nCode, hook.wParam, hook.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"vk=%d, lParam=%p", hook.wParam, hook.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
         break;
+
     case EVENT_DLL_LOAD:
     case EVENT_DLL_UNLOAD:
-        StringCchPrintfW(pszDest, cchDest, L"%s", Event->Info.Buffer);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"%s", Event->Info.Buffer);
         break;
+
     case EVENT_HOOK:
     case EVENT_UNHOOK:
-        StringCchPrintfW(pszDest, cchDest, L"");
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"");
         break;
+
     case WH_SHELL:
         Ptr1 = Format_HSHELL(hook.nCode);
-        StringCchPrintfW(pszDest, cchDest, L"%s, wParam=%p, lParam=%p", Ptr1, hook.wParam, hook.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"%s, wParam=%p, lParam=%p", Ptr1, hook.wParam, hook.lParam);
         break;
+
     case WH_CBT:
         Ptr1 = Format_CBT(hook.nCode);
-        StringCchPrintfW(pszDest, cchDest, L"%s, wParam=%p, lParam=%p", Ptr1, hook.wParam, hook.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"%s, wParam=%p, lParam=%p", Ptr1, hook.wParam, hook.lParam);
         break;
+
     case WH_GETMESSAGE:
-        Ptr1 = Format_Action(hook.nCode);
-        Ptr2 = Format_PM(hook.wParam);
-        StringCchPrintfW(pszDest, cchDest, L"%s, %s, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
-            Ptr1, Ptr2, hook.m.msg.hwnd, hook.m.msg.message, hook.m.msg.wParam, hook.m.msg.lParam);
+        Ptr1 = Format_PM(hook.wParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"hWnd=%p, %s, (%s), wParam=%p, lParam=%p",
+            hook.m.msg.hwnd, Format_WM(hook.m.msg.message), Ptr1, hook.m.msg.wParam, hook.m.msg.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
         break;
 
     case WH_CALLWNDPROC:
-        Ptr1 = Format_Action(hook.nCode);
-        StringCchPrintfW(pszDest, cchDest, L"%s, cur thread: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
-            Ptr1, hook.wParam, hook.m.wp.hwnd, hook.m.wp.message, hook.m.wp.wParam, hook.m.wp.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"cur thread: %d, hWnd=%p, %s, wParam=%p, lParam=%p",
+            hook.wParam, hook.m.wp.hwnd, Format_WM(hook.m.wp.message), hook.m.wp.wParam, hook.m.wp.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
         break;
 
     case WH_CALLWNDPROCRET:
-        Ptr1 = Format_Action(hook.nCode);
-        StringCchPrintfW(pszDest, cchDest, L"%s, cur proc: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
-            Ptr1, hook.wParam, hook.m.wpr.hwnd, hook.m.wpr.message, hook.m.wpr.wParam, hook.m.wpr.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"cur proc: %d, hWnd=%p, msg=0x%x, wParam=%p, lParam=%p",
+            hook.wParam, hook.m.wpr.hwnd, hook.m.wpr.message, hook.m.wpr.wParam, hook.m.wpr.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
         break;
 
     case WH_DEBUG:
-        assert(hook.nCode == HC_ACTION);
         Ptr1 = HookDll_HookName(hook.wParam);
-        StringCchPrintfW(pszDest, cchDest, L"(%s), tid=0x%x, " /*L"tidinstaller=0x%x, "*/ L"code=%d, wParam=%p, lParam=%p",
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"(%s), tid=0x%x, " /*L"tidinstaller=0x%x, "*/ L"code=%d, wParam=%p, lParam=%p",
             Ptr1, hook.m.dbg.idThread, /*hook.m.dbg.idThreadInstaller,*/ hook.m.dbg.code, hook.m.dbg.wParam, hook.m.dbg.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
+        break;
+
+    case WH_MOUSE:
+        Ptr1 = Format_WM(hook.wParam);
+        Ptr2 = Format_HitTest(hook.m.mh.wHitTestCode);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0,
+            L"%s, x=%d, y=%d, hwnd=0x%x, hit=%s", Ptr1, hook.m.mh.pt.x, hook.m.mh.pt.y, hook.m.mh.hwnd, Ptr2);
+
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
+
+        if (hook.m.mh.dwExtraInfo)
+        {
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0,
+                L", extra=%d", hook.m.mh.dwExtraInfo);
+        }
         break;
 
     default:
-        StringCchPrintfW(pszDest, cchDest, L"nCode=%d, wParam=%p, lParam=%p", hook.nCode, hook.wParam, hook.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"wParam=%p, lParam=%p", hook.wParam, hook.lParam);
+        if (hook.nCode != HC_ACTION)
+        {
+            Ptr1 = Format_Action(hook.nCode);
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
         break;
     }
 }

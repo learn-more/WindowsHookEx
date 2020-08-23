@@ -51,6 +51,7 @@ struct HOOK_EVENT
                 CWPSTRUCT wp;
                 CWPRETSTRUCT wpr;
                 DEBUGHOOKINFO dbg;
+                MOUSEHOOKSTRUCT mh;
             } m;
         } Hook;
         WCHAR Buffer[32];

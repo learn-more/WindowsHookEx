@@ -86,7 +86,7 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
     Event.HookType = WH_MOUSE;
     Event.Info.Hook.nCode = nCode;
     Event.Info.Hook.wParam = wParam;
-    Event.Info.Hook.lParam = lParam;
+    Event.Info.Hook.m.mh = *(MOUSEHOOKSTRUCT*)lParam;
     Event_Push(Event);
 
     return CallNextHookEx(0, nCode, wParam, lParam);

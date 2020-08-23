@@ -10,4 +10,6 @@ LPCWSTR Format_HSHELL(int nCode);
 LPCWSTR Format_CBT(int nCode);
 LPCWSTR Format_Action(int nCode);
 LPCWSTR Format_PM(int nCode);
+LPCWSTR Format_HitTest(int nCode);
+LPCWSTR Format_WM(int nCode);
 

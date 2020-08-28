@@ -118,7 +118,7 @@ SafeLoadSystemLibrary(const std::wstring& wstrLibraryFile)
 
     // LOAD_LIBRARY_SEARCH_SYSTEM32 is not supported, so use the next best LOAD_WITH_ALTERED_SEARCH_PATH instead.
     std::wstring wstrLibraryFilePath(MAX_PATH, L'\0');
-    UINT cch = GetSystemDirectoryW(wstrLibraryFilePath.data(), wstrLibraryFilePath.size());
+    UINT cch = GetSystemDirectoryW(wstrLibraryFilePath.data(), static_cast<UINT>(wstrLibraryFilePath.size()));
     if (cch == 0 || cch >= wstrLibraryFilePath.size())
     {
         return nullptr;

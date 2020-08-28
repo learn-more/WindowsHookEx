@@ -508,7 +508,7 @@ CMainWindow::WorkLoop()
         else if (bRet == 0)
         {
             // WM_QUIT message terminated the message loop.
-            return msg.wParam;
+            return static_cast<int>(msg.wParam);
         }
         else
         {

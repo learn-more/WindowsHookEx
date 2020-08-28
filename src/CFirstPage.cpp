@@ -154,7 +154,7 @@ CFirstPage::_OnCommand(WPARAM wParam, LPARAM /*lParam*/)
         if (HIWORD(wParam) == CBN_SELCHANGE)
         {
             int index = ComboBox_GetCurSel(m_hComboHookType);
-            int idHook = ComboBox_GetItemData(m_hComboHookType, index);
+            int idHook = static_cast<int>(ComboBox_GetItemData(m_hComboHookType, index));
             BOOL fSupportsLocalHook = HookDll_CanBeSetLocal(idHook);
             Button_Enable(m_hRadioLocal, fSupportsLocalHook);
             if (!fSupportsLocalHook)

@@ -22,7 +22,7 @@ std::wstring getModuleFilename(HMODULE Module)
     do
     {
         Buffer.resize(Buffer.size() + MAX_PATH);
-        returned = GetModuleFileNameW(Module, Buffer.data(), Buffer.size());
+        returned = GetModuleFileNameW(Module, Buffer.data(), static_cast<DWORD>(Buffer.size()));
     } while (returned >= Buffer.size());
 
     Buffer.resize(returned);

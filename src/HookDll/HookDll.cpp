@@ -158,7 +158,7 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
         break;
 
     case WH_GETMESSAGE:
-        Ptr1 = Format_PM(hook.wParam);
+        Ptr1 = Format_PM(static_cast<int>(hook.wParam));
         StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"hWnd=%p, %s, (%s), wParam=%p, lParam=%p",
             hook.m.msg.hwnd, Format_WM(hook.m.msg.message), Ptr1, hook.m.msg.wParam, hook.m.msg.lParam);
         if (hook.nCode != HC_ACTION)
@@ -189,7 +189,7 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
         break;
 
     case WH_DEBUG:
-        Ptr1 = HookDll_HookName(hook.wParam);
+        Ptr1 = HookDll_HookName(static_cast<int>(hook.wParam));
         StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"(%s), tid=0x%x, " /*L"tidinstaller=0x%x, "*/ L"code=%d, wParam=%p, lParam=%p",
             Ptr1, hook.m.dbg.idThread, /*hook.m.dbg.idThreadInstaller,*/ hook.m.dbg.code, hook.m.dbg.wParam, hook.m.dbg.lParam);
         if (hook.nCode != HC_ACTION)
@@ -200,7 +200,7 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
         break;
 
     case WH_MOUSE:
-        Ptr1 = Format_WM(hook.wParam);
+        Ptr1 = Format_WM(static_cast<int>(hook.wParam));
         Ptr2 = Format_HitTest(hook.m.mh.wHitTestCode);
         StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0,
             L"%s, x=%d, y=%d, hwnd=0x%x, hit=%s", Ptr1, hook.m.mh.pt.x, hook.m.mh.pt.y, hook.m.mh.hwnd, Ptr2);

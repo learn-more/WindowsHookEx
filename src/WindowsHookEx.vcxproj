@@ -194,6 +194,7 @@
     <ClCompile Include="CFirstPage.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
     <ClCompile Include="CSecondPage.cpp" />
+    <ClCompile Include="AlternateCallbacks.cpp" />
     <ClCompile Include="Wizard-2020.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>

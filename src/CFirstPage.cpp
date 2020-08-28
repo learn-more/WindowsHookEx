@@ -29,7 +29,8 @@ CFirstPage::_OnCreate()
     m_hRadioLocal = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
 
     // Set up the check boxes (options).
-
+    text = LoadStringAsWstr(hInstance, IDS_OPT_HOST_HOOK_PROC);
+    m_hHostHookproc = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     text = LoadStringAsWstr(hInstance, IDS_OPT_IGNORE_OWN_MSG);
     m_hIgnoreOwnMsg = CreateWindowExW(0, WC_BUTTON, text.c_str(), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
     text = LoadStringAsWstr(hInstance, IDS_OPT_BREAK_ON_LOAD);
@@ -111,7 +112,7 @@ CFirstPage::_OnSize()
     int iCheckY = iControlY * 3;
     const int iCheckWidth = rcWindow.right;
 
-    HWND hCheckboxes[] = { m_hIgnoreOwnMsg, m_hBreakOnDllLoad, m_hBreakOnDllUnload, m_hBreakOnFirstMsg };
+    HWND hCheckboxes[] = { m_hHostHookproc, m_hIgnoreOwnMsg, m_hBreakOnDllLoad, m_hBreakOnDllUnload, m_hBreakOnFirstMsg };
 
     for (HWND hCheckbox : hCheckboxes)
     {
@@ -188,8 +189,13 @@ CFirstPage::OnNext()
 {
     // Configure hook type.
     int index = ComboBox_GetCurSel(m_hComboHookType);
-    m_Settings->idHook = ComboBox_GetItemData(m_hComboHookType, index);
+    m_Settings->idHook = static_cast<int>(ComboBox_GetItemData(m_hComboHookType, index));
     m_Settings->GlobalHook = Button_GetCheck(m_hRadioGlobal) == BST_CHECKED;
+
+    if (Button_GetCheck(m_hHostHookproc) == BST_CHECKED)
+        m_Settings->AlternateProc = GetHostProc(m_Settings->idHook);
+    else
+        m_Settings->AlternateProc = nullptr;
 
     // We don't know the hWnd of the second page, so put a sentinel in place,
     // so that the second page can fill in the correct value
@@ -213,6 +219,7 @@ CFirstPage::UpdateDPI()
         m_hComboHookType,
         m_hRadioGlobal,
         m_hRadioLocal,
+        m_hHostHookproc,
         m_hIgnoreOwnMsg,
         m_hBreakOnDllLoad,
         m_hBreakOnDllUnload,

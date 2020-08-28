@@ -26,6 +26,7 @@ private:
     HWND m_hComboHookType;
     HWND m_hRadioGlobal;
     HWND m_hRadioLocal;
+    HWND m_hHostHookproc;
 
     HWND m_hIgnoreOwnMsg;
     HWND m_hBreakOnDllLoad;

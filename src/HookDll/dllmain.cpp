@@ -49,7 +49,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
 
         if (fIsFirst)
         {
-            Mem->Settings.idHook = WH_CBT;
+            Mem->Settings.idHook = WH_KEYBOARD;
             Mem->Common.HostProcess = GetCurrentProcessId();
         }
 

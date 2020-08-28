@@ -8,7 +8,6 @@
 #include "Shared.h"
 #include "SharedMem.h"
 #include "Event.h"
-#include "Callbacks.h"
 #include "Format.h"
 #include <cassert>
 #include <strsafe.h>
@@ -33,22 +32,22 @@ struct HOOK_INFO
 // https://docs.microsoft.com/en-us/windows/win32/winmsg/using-hooks
 
 HOOK_INFO g_HookInfo[] = {
-    { L"WH_MSGFILTER", TRUE, MessageProc },
-    { L"WH_JOURNALRECORD", FALSE, JournalRecordProc },
-    { L"WH_JOURNALPLAYBACK", FALSE, JournalPlaybackProc },
-    { L"WH_KEYBOARD", TRUE, KeyboardProc },
-    { L"WH_GETMESSAGE", TRUE, GetMsgProc },
-    { L"WH_CALLWNDPROC", TRUE, CallWndProc },
-    { L"WH_CBT", TRUE, CBTProc },
-    { L"WH_SYSMSGFILTER", FALSE, SysMsgProc },
-    { L"WH_MOUSE", TRUE, MouseProc },
+    { L"WH_MSGFILTER", TRUE, HookDll_MessageProc },
+    { L"WH_JOURNALRECORD", FALSE, HookDll_JournalRecordProc },
+    { L"WH_JOURNALPLAYBACK", FALSE, HookDll_JournalPlaybackProc },
+    { L"WH_KEYBOARD", TRUE, HookDll_KeyboardProc },
+    { L"WH_GETMESSAGE", TRUE, HookDll_GetMsgProc },
+    { L"WH_CALLWNDPROC", TRUE, HookDll_CallWndProc },
+    { L"WH_CBT", TRUE, HookDll_CBTProc },
+    { L"WH_SYSMSGFILTER", FALSE, HookDll_SysMsgProc },
+    { L"WH_MOUSE", TRUE, HookDll_MouseProc },
     { L"WH_HARDWARE", }, /* Does not exist anymore? */
-    { L"WH_DEBUG", TRUE, DebugProc },
-    { L"WH_SHELL", TRUE, ShellProc },
-    { L"WH_FOREGROUNDIDLE", TRUE, ForegroundIdleProc },
-    { L"WH_CALLWNDPROCRET", TRUE, CallWndRetProc },
-    { L"WH_KEYBOARD_LL", FALSE, LowLevelKeyboardProc },
-    { L"WH_MOUSE_LL", FALSE, LowLevelMouseProc },
+    { L"WH_DEBUG", TRUE, HookDll_DebugProc },
+    { L"WH_SHELL", TRUE, HookDll_ShellProc },
+    { L"WH_FOREGROUNDIDLE", TRUE, HookDll_ForegroundIdleProc },
+    { L"WH_CALLWNDPROCRET", TRUE, HookDll_CallWndRetProc },
+    { L"WH_KEYBOARD_LL", FALSE, HookDll_LowLevelKeyboardProc },
+    { L"WH_MOUSE_LL", FALSE, HookDll_LowLevelMouseProc },
 };
 
 static
@@ -290,8 +289,8 @@ HookDll_InstallHook(void)
         return FALSE;
     }
 
-    HOOKPROC lpfn = hookInfo->lpFn;
-    HINSTANCE hmod = (HINSTANCE)&__ImageBase;
+    HOOKPROC lpfn = Mem->Settings.AlternateProc ? Mem->Settings.AlternateProc : hookInfo->lpFn;
+    HINSTANCE hmod = Mem->Settings.AlternateProc ? nullptr : (HINSTANCE)&__ImageBase;
     DWORD dwThreadId = Mem->Settings.GlobalHook ? 0 : GetCurrentThreadId();
 
     HOOK_EVENT Event = { 0 };

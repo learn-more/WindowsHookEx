@@ -19,6 +19,7 @@ BEGIN
     IDS_FIRSTPAGE_HEADER            "Select a configuration"
     IDS_FIRSTPAGE_SUBHEADER         "Specify the hook type, and additional options"
 
+    IDS_OPT_HOST_HOOK_PROC          "Use a hook procedure in the .exe instead of in the .dll"
     IDS_OPT_IGNORE_OWN_MSG          "Ignore hook messages for the result page (recommended)"
     IDS_OPT_BREAK_ON_LOAD           "Break into the debugger when the hook dll is loaded"
     IDS_OPT_BREAK_ON_UNLOAD         "Break into the debugger when the hook dll is unloaded"

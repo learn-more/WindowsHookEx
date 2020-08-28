@@ -20,6 +20,7 @@ struct SHARED_SETTINGS
     int idHook;
     BOOL GlobalHook;
     HWND IgnoreWnd;
+    HOOKPROC AlternateProc;
 
     BOOL BreakOnLoad;
     BOOL BreakOnUnload;
@@ -103,3 +104,5 @@ VOID
 HOOKDLL_DECLSPEC
 HookDll_UninstallHook();
 
+
+#include "Callbacks.h"

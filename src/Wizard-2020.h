@@ -52,3 +52,8 @@ class CSecondPage;
 extern const int iFontReferenceDPI;
 extern const int iWindowsReferenceDPI;
 extern const WCHAR wszAppName[];
+
+// AlternateCallbacks.cpp
+HOOKPROC
+GetHostProc(int idHook);
+

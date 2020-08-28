@@ -84,6 +84,7 @@ HookDll_HookName(int idHook)
         case EVENT_DLL_UNLOAD:  return L"DLL_UNLOAD";
         case EVENT_HOOK:        return L"HOOK";
         case EVENT_UNHOOK:      return L"UNHOOK";
+        case EVENT_ERROR:       return L"ERROR";
         default:
             break;
         }
@@ -145,6 +146,20 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
     case EVENT_HOOK:
     case EVENT_UNHOOK:
         StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"");
+        break;
+
+    case EVENT_ERROR:
+    {
+        PWSTR pws;
+        DWORD cch = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, static_cast<DWORD>(hook.nCode), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&pws, 0, NULL);
+
+        if (cch)
+        {
+            StringCchCopyExW(pszDest, cchDest, pws, &pszDest, &cchDest, 0);
+            LocalFree(pws);
+        }
+    }
         break;
 
     case WH_SHELL:
@@ -283,6 +298,15 @@ HookDll_InstallHook(void)
     Event.HookType = EVENT_HOOK;
     Event_Push(Event);
     Mem->Common.hHook = SetWindowsHookExW(idHook, lpfn, hmod, dwThreadId);
+
+    if (!Mem->Common.hHook)
+    {
+        DWORD dwErr = GetLastError();
+        Event.HookType = EVENT_ERROR;
+        Event.Info.Hook.nCode = dwErr;
+        Event_Push(Event);
+    }
+
     return TRUE;
 }
 

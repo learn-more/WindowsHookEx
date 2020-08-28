@@ -297,14 +297,14 @@ CMainWindow::_OnPaint()
     rcHeaderText.left = MulDiv(15, m_wCurrentDPI, iWindowsReferenceDPI);
     rcHeaderText.top = MulDiv(15, m_wCurrentDPI, iWindowsReferenceDPI);
     SelectObject(hMemDC, m_hBoldGuiFont);
-    DrawTextW(hMemDC, m_pwstrHeader->c_str(), m_pwstrHeader->size(), &rcHeaderText, 0);
+    DrawTextW(hMemDC, m_pwstrHeader->c_str(), static_cast<int>(m_pwstrHeader->size()), &rcHeaderText, 0);
 
     // Draw the subheader text.
     RECT rcSubHeaderText = rcHeader;
     rcSubHeaderText.left = MulDiv(20, m_wCurrentDPI, iWindowsReferenceDPI);
     rcSubHeaderText.top = MulDiv(32, m_wCurrentDPI, iWindowsReferenceDPI);
     SelectObject(hMemDC, m_hGuiFont);
-    DrawTextW(hMemDC, m_pwstrSubHeader->c_str(), m_pwstrSubHeader->size(), &rcSubHeaderText, 0);
+    DrawTextW(hMemDC, m_pwstrSubHeader->c_str(), static_cast<int>(m_pwstrSubHeader->size()), &rcSubHeaderText, 0);
 
     // Draw the logo into the upper right corner.
     const int iLogoPadding = MulDiv(5, m_wCurrentDPI, iWindowsReferenceDPI);

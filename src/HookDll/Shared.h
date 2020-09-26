@@ -33,6 +33,7 @@ struct SHARED_SETTINGS
 #define EVENT_HOOK          102
 #define EVENT_UNHOOK        103
 #define EVENT_ERROR         104
+#define EVENT_ERRORMSG      105
 
 // Linked list, variable data instead?
 struct HOOK_EVENT

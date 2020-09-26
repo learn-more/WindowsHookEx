@@ -83,7 +83,8 @@ HookDll_HookName(int idHook)
         case EVENT_DLL_UNLOAD:  return L"DLL_UNLOAD";
         case EVENT_HOOK:        return L"HOOK";
         case EVENT_UNHOOK:      return L"UNHOOK";
-        case EVENT_ERROR:       return L"ERROR";
+        case EVENT_ERROR:
+        case EVENT_ERRORMSG:    return L"ERROR";
         default:
             break;
         }
@@ -139,7 +140,8 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
 
     case EVENT_DLL_LOAD:
     case EVENT_DLL_UNLOAD:
-        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"%s", Event->Info.Buffer);
+    case EVENT_ERRORMSG:
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"%.*s", ARRAYSIZE(Event->Info.Buffer), Event->Info.Buffer);
         break;
 
     case EVENT_HOOK:
@@ -279,13 +281,17 @@ HookDll_InstallHook(void)
     SHARED_MEM* Mem = SharedMem_Pointer();
 
     if (Mem->Common.hHook != nullptr)
+    {
+        Event_String(EVENT_ERRORMSG, L"hHook already set?!");
         return FALSE;
+    }
 
     int idHook = Mem->Settings.idHook;
     HOOK_INFO* hookInfo = GetHookInfo(idHook);
 
     if (!hookInfo)
     {
+        Event_String(EVENT_ERRORMSG, L"Unable to find hook info");
         return FALSE;
     }
 

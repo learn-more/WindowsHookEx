@@ -37,7 +37,6 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
                      )
 {
     BOOL fIsFirst = FALSE;
-    HOOK_EVENT Event = { 0 };
 
     SHARED_MEM* Mem;
     switch (ul_reason_for_call)
@@ -60,9 +59,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
                 g_ProcessName = g_ProcessName.substr(slash + 1);
         }
 
-        Event.HookType = EVENT_DLL_LOAD;
-        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), g_ProcessName.c_str());
-        Event_Push(Event);
+        Event_String(EVENT_DLL_LOAD, g_ProcessName.c_str());
 
         break;
     case DLL_THREAD_ATTACH:
@@ -77,9 +74,7 @@ BOOL APIENTRY DllMain( HMODULE /*hModule*/,
 
         InterlockedDecrement(&Mem->Common.NumberOfDllsLoaded);
 
-        Event.HookType = EVENT_DLL_UNLOAD;
-        StringCchCopy(Event.Info.Buffer, _countof(Event.Info.Buffer), g_ProcessName.c_str());
-        Event_Push(Event);
+        Event_String(EVENT_DLL_UNLOAD, g_ProcessName.c_str());
 
         SharedMem_Close();
         break;

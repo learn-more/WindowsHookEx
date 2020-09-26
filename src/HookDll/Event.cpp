@@ -7,6 +7,7 @@
 #include "pch.h"
 #include "Shared.h"
 #include "SharedMem.h"
+#include <strsafe.h>
 
 static BOOL g_fHitFirstEvent = FALSE;
 
@@ -117,4 +118,13 @@ void Event_Pop(HOOK_EVENT* event, size_t& NumEvents)
         }
         Queue_Unlock(queue);
     }
+}
+
+void Event_String(DWORD id, LPCWSTR text)
+{
+    HOOK_EVENT Event = {};
+
+    Event.HookType = id;
+    StringCchCopy(Event.Info.Buffer, ARRAYSIZE(Event.Info.Buffer), text);
+    Event_Push(Event);
 }

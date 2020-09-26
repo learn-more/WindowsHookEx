@@ -206,12 +206,16 @@ HookDll_FormatInfo(LPWSTR pszDest, size_t cchDest, const HOOK_EVENT* Event)
 
     case WH_DEBUG:
         Ptr1 = HookDll_HookName(static_cast<int>(hook.wParam));
-        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"(%s), tid=0x%x, " /*L"tidinstaller=0x%x, "*/ L"code=%d, wParam=%p, lParam=%p",
-            Ptr1, hook.m.dbg.idThread, /*hook.m.dbg.idThreadInstaller,*/ hook.m.dbg.code, hook.m.dbg.wParam, hook.m.dbg.lParam);
+        StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L"(%s), tid=0x%x, code=%d, wParam=%p, lParam=%p",
+            Ptr1, hook.m.dbg.idThread, hook.m.dbg.code, hook.m.dbg.wParam, hook.m.dbg.lParam);
         if (hook.nCode != HC_ACTION)
         {
             Ptr1 = Format_Action(hook.nCode);
             StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", (%s)", Ptr1);
+        }
+        if (hook.m.dbg.idThreadInstaller)
+        {
+            StringCchPrintfExW(pszDest, cchDest, &pszDest, &cchDest, 0, L", tidinstaller=0x%x, ", hook.m.dbg.idThreadInstaller);
         }
         break;
 

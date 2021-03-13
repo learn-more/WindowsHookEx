@@ -5,7 +5,8 @@ title: WindowsHookEx
 
 # WindowsHookEx
 
-![Example](WindowsHookEx-Hooks.png)
+Running on Windows XP:
+![Example on Windows XP](WindowsHookEx-Hooks.png)
 
 ## Why WindowsHookEx?
 When developing tooling to work with [Windows Hooks](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowshookexa), it is usefull to see it in action.
@@ -44,6 +45,7 @@ Additionally, when working on [ReactOS](https://reactos.org) it is a good tool t
 * An Atom viewer, showing [Global and User Atoms](https://docs.microsoft.com/en-us/windows/win32/dataxchg/about-atom-tables).
     * Highlight Added Atoms (green)
     * Highlight Removed Atoms (red)
+* Works on Windows XP / Server 2003 and newer
 
 
 

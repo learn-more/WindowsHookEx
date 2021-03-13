@@ -1,0 +1,40 @@
+version: '#{build}-{branch}'
+image: Visual Studio 2017
+
+configuration: Release
+
+environment:
+  matrix:
+    - PlatformToolset: v141_xp
+
+platform:
+  - x86
+  - x64
+
+build:
+  project: src\WindowsHookEx.sln
+  parallel: true
+  verbosity: minimal
+
+after_build:
+  cmd:
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\bin\WindowsHookEx-%PLATFORM%.exe %APPVEYOR_BUILD_FOLDER%\bin\WindowsHookEx-%PLATFORM%.pdb %APPVEYOR_BUILD_FOLDER%\bin\HookDll-%PLATFORM%.dll %APPVEYOR_BUILD_FOLDER%\bin\HookDll-%PLATFORM%.pdb
+
+test: off
+
+artifacts:
+  - path: WindowsHookEx-$(platform).zip
+    name: WindowsHookEx-$(platform)
+
+skip_commits:
+  files:
+    - docs/*
+    - '**/*.html'
+
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: Oi0dY+G9aVWKKDX1Zfvnyl6l9RiEuomDiBvkiZMAudT9T42pVw7axiCeuu+tOtK0
+    draft: true
+    on:
+      APPVEYOR_REPO_TAG: true

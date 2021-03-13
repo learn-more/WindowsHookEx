@@ -5,3 +5,4 @@ Release
 *.sdf
 *.suo
 *.user
+src/bin

@@ -11,6 +11,9 @@ platform:
   - x86
   - x64
 
+install:
+  - git submodule update --init --recursive
+
 build:
   project: src\WindowsHookEx.sln
   parallel: true
@@ -18,7 +21,7 @@ build:
 
 after_build:
   cmd:
-    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\bin\WindowsHookEx-%PLATFORM%.exe %APPVEYOR_BUILD_FOLDER%\bin\WindowsHookEx-%PLATFORM%.pdb %APPVEYOR_BUILD_FOLDER%\bin\HookDll-%PLATFORM%.dll %APPVEYOR_BUILD_FOLDER%\bin\HookDll-%PLATFORM%.pdb
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.exe %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.pdb %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.dll %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.pdb
 
 test: off
 

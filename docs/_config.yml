@@ -1,0 +1,7 @@
+title: WindowsHookEx
+description: A utility designed to investigate the behavior of the Windows api 'SetWindowsHookEx', and the behavior of the system when installing / calling hooks.
+theme: jekyll-theme-slate
+show_downloads: "true"
+
+# To serve jekyll locally:
+repository:         learn-more/WindowsHookEx

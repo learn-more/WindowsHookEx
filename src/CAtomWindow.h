@@ -16,7 +16,6 @@ enum class AtomTable
 
 enum class SortOrder
 {
-    Neutral,
     Ascending,
     Descending
 };
@@ -43,7 +42,7 @@ class CAtomWindow
 public:
     HWND GetHwnd() const { return m_hWnd; }
     AtomInfo* FindAtomInfo(ATOM Id, AtomTable Table) const;
-    void UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate, int& ensureVisible);
+    void UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate);
     int FindAtomIndex(const AtomInfo* Info);
 
     static std::unique_ptr<CAtomWindow> Create(CMainWindow* pMainWindow);
@@ -54,7 +53,7 @@ private:
     HWND m_hWnd;
     HWND m_hList;
     int m_nColumns = 0;
-    int m_nLastHeaderID = -1;
+    int m_nLastHeaderID = 1;
     SortOrder m_SortOrder = SortOrder::Ascending;
     std::vector<std::unique_ptr<AtomInfo>> m_Atoms;
     UINT m_Update = 1;
@@ -75,4 +74,7 @@ private:
     LRESULT _OnListViewColumnClick(NMLISTVIEW* pnmv);
     LRESULT _OnListViewGetDispInfo(NMLVDISPINFOW* pnmv);
     LRESULT _OnListViewCustomDraw(NMLVCUSTOMDRAW* plvcd);
+
+    void _UpdateHeader();
+    void _UpdateItems();
 };

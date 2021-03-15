@@ -13,9 +13,17 @@ static const int iMinWindowHeight = 400;
 static const int iMinWindowWidth = 500;
 static ATOM g_AtomWndAtom = 0;
 
+enum AtomColumns
+{
+    AtomId,
+    AtomType,
+    AtomName
+};
+
 const static int g_ColumnWidths[] = {
     60,
     60,
+    LVSCW_AUTOSIZE,
 };
 
 CAtomWindow::CAtomWindow(CMainWindow* pMainWindow)
@@ -71,25 +79,26 @@ CAtomWindow::_OnCreate()
     lvColumn.pszText = wstrColumn.data();
     ListView_InsertColumn(m_hList, m_nColumns++, &lvColumn);
 
-    // Adjust the list column widths.
-    for (int n = 0; n < m_nColumns - 1; ++n)
-    {
-        assert(n < _countof(g_ColumnWidths));
-        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
-    }
-    ListView_SetColumnWidth(m_hList, m_nColumns -1, LVSCW_AUTOSIZE);
-
     // Set the window size.
     int iHeight = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
     int iWidth = MulDiv(iMinWindowWidth, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
     SetWindowPos(m_hWnd, nullptr, 0, 0, iWidth, iHeight, SWP_NOMOVE);
 
+    _UpdateHeader();
+
     // Finally, show the window.
     ShowWindow(m_hWnd, SW_SHOW);
 
     SetTimer(m_hWnd, 0x1234, 2000, nullptr);
+    // Immediately refresh
     _OnTimer(0x1234);
 
+    // Adjust the list column widths.
+    for (int n = 0; n < m_nColumns; ++n)
+    {
+        assert(n < _countof(g_ColumnWidths));
+        ListView_SetColumnWidth(m_hList, n, g_ColumnWidths[n]);
+    }
     return 0;
 }
 
@@ -169,14 +178,13 @@ CAtomWindow::_OnTimer(WPARAM wParam)
     {
         SetWindowRedraw(m_hList, FALSE);
         bool invalidate = false;
-        int ensureVisible = -1;
 
         for (UINT n = 0xC000; n <= 0xffff; ++n)
         {
             UINT res = GlobalGetAtomNameW((ATOM)n, Buffer, _countof(Buffer));
             if (res)
             {
-                UpdateAtom((ATOM)n, AtomTable::Global, std::wstring(Buffer, res), invalidate, ensureVisible);
+                UpdateAtom((ATOM)n, AtomTable::Global, std::wstring(Buffer, res), invalidate);
             }
         }
         for (UINT n = 0xC000; n <= 0xffff; ++n)
@@ -184,7 +192,7 @@ CAtomWindow::_OnTimer(WPARAM wParam)
             UINT res = GetClipboardFormatNameW(n, Buffer, _countof(Buffer));
             if (res)
             {
-                UpdateAtom((ATOM)n, AtomTable::User, std::wstring(Buffer, res), invalidate, ensureVisible);
+                UpdateAtom((ATOM)n, AtomTable::User, std::wstring(Buffer, res), invalidate);
             }
         }
 
@@ -215,14 +223,11 @@ CAtomWindow::_OnTimer(WPARAM wParam)
             it++;
         }
 
-        if (ensureVisible >= 0)
-        {
-            ListView_SetColumnWidth(m_hList, m_nColumns - 1, LVSCW_AUTOSIZE);
-            ListView_EnsureVisible(m_hList, ensureVisible, FALSE);
-        }
         SetWindowRedraw(m_hList, TRUE);
         if (invalidate)
         {
+            ListView_SetColumnWidth(m_hList, m_nColumns - 1, LVSCW_AUTOSIZE);
+            _UpdateItems();
             InvalidateRect(m_hList, NULL, FALSE);
         }
 
@@ -255,7 +260,7 @@ CAtomWindow::FindAtomIndex(const AtomInfo* Info)
 }
 
 void
-CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate, int& ensureVisible)
+CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool& invalidate)
 {
     AtomInfo* Info = FindAtomInfo(Id, Table);
     if (Info)
@@ -265,8 +270,6 @@ CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool
             Info->Name = Name;
             Info->State = AtomState::Changed;
             invalidate = true;
-            if (ensureVisible < 0)
-                ensureVisible = FindAtomIndex(Info);
         }
         else if (Info->State != AtomState::Present)
         {
@@ -285,22 +288,53 @@ CAtomWindow::UpdateAtom(ATOM Id, AtomTable Table, const std::wstring& Name, bool
         lvI.lParam = reinterpret_cast<LPARAM>(m_Atoms.back().get());
         lvI.iItem = INT_MAX;
         lvI.iItem = ListView_InsertItem(m_hList, &lvI);
-        ensureVisible = lvI.iItem;
     }
 }
 
-//struct SortContext
-//{
-//    int nHeader;
-//    bool bAscending;
-//};
-//
-//static
-//int CALLBACK
-//s_CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
-//{
-//
-//}
+struct SortContext
+{
+    int nHeader;
+    SortOrder SortOrder;
+};
+
+static
+int CALLBACK
+s_CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+    const SortContext* ctx = reinterpret_cast<const SortContext*>(lParamSort);
+    const AtomInfo* info1;
+    const AtomInfo* info2;
+    if (ctx->SortOrder == SortOrder::Ascending)
+    {
+        info1 = reinterpret_cast<const AtomInfo*>(lParam1);
+        info2 = reinterpret_cast<const AtomInfo*>(lParam2);
+    }
+    else
+    {
+        info1 = reinterpret_cast<const AtomInfo*>(lParam2);
+        info2 = reinterpret_cast<const AtomInfo*>(lParam1);
+    }
+
+    switch (ctx->nHeader)
+    {
+    case AtomType:
+        if (info1->Table != info2->Table)
+        {
+            if (info1->Table == AtomTable::Global)
+                return 1;
+            else
+                return -1;
+        }
+        // fall-trough
+    case AtomId:
+        return (INT)(UINT)(USHORT)info1->Id - (INT)(UINT)(USHORT)info2->Id;
+
+    case AtomName:
+        return _wcsicmp(info1->Name.c_str(), info2->Name.c_str());
+
+    DEFAULT_UNREACHABLE;
+    }
+}
 
 LRESULT
 CAtomWindow::_OnNotify(WPARAM wParam, LPARAM lParam)
@@ -333,27 +367,15 @@ CAtomWindow::_OnListViewColumnClick(NMLISTVIEW* pnmv)
         m_SortOrder = SortOrder::Ascending;
     }
 
-    // Set the sorting style to the new column
-    hColumn.mask = HDI_FORMAT;
-    Header_GetItem(hHeader, nHeaderID, &hColumn);
-
-    hColumn.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
-    if (m_SortOrder == SortOrder::Ascending)
-        hColumn.fmt |= HDF_SORTDOWN;
-    else if (m_SortOrder == SortOrder::Descending)
-        hColumn.fmt |= HDF_SORTUP;
-    Header_SetItem(hHeader, nHeaderID, &hColumn);
-
-    // Sort the list
-    //SortContext ctx = { nHeaderID, m_bIsAscending };
-    //ListView_SortItems(m_hList, s_CompareFunc, &ctx);
-
     // Save the new state
     m_nLastHeaderID = nHeaderID;
     if (m_SortOrder == SortOrder::Descending)
-        m_SortOrder = SortOrder::Neutral;
+        m_SortOrder = SortOrder::Ascending;
     else
-        m_SortOrder = static_cast<SortOrder>(static_cast<int>(m_SortOrder) + 1);
+        m_SortOrder = SortOrder::Descending;
+
+    _UpdateHeader();
+    _UpdateItems();
 
     return 0;
 }
@@ -361,22 +383,22 @@ CAtomWindow::_OnListViewColumnClick(NMLISTVIEW* pnmv)
 LRESULT
 CAtomWindow::_OnListViewGetDispInfo(NMLVDISPINFOW* plvdi)
 {
-    AtomInfo* Info = reinterpret_cast<AtomInfo*>(plvdi->item.lParam);
+    AtomInfo* info = reinterpret_cast<AtomInfo*>(plvdi->item.lParam);
     switch (plvdi->item.iSubItem)
     {
-    case 0:
-        StringCchPrintfW(plvdi->item.pszText, plvdi->item.cchTextMax, L"0x%04X", Info->Id);
+    case AtomId:
+        StringCchPrintfW(plvdi->item.pszText, plvdi->item.cchTextMax, L"0x%04X", info->Id);
         break;
-    case 1:
-        if (Info->Table == AtomTable::Global)
+    case AtomType:
+        if (info->Table == AtomTable::Global)
             plvdi->item.pszText = m_wstrGlobalAtom.data();
-        else if (Info->Table == AtomTable::User)
+        else if (info->Table == AtomTable::User)
             plvdi->item.pszText = m_wstrUserAtom.data();
         else
             __debugbreak();
         break;
-    case 2:
-        plvdi->item.pszText = Info->Name.data();
+    case AtomName:
+        plvdi->item.pszText = info->Name.data();
         break;
         DEFAULT_UNREACHABLE;
     }
@@ -469,3 +491,28 @@ CAtomWindow::Create(CMainWindow* pMainWindow)
     return pAtomWindow;
 }
 
+void
+CAtomWindow::_UpdateHeader()
+{
+    HWND hHeader = (HWND)SendMessageW(m_hList, LVM_GETHEADER, 0, 0);
+    HDITEMW hColumn = { 0 };
+
+    // Set the sorting style to the new column
+    hColumn.mask = HDI_FORMAT;
+    Header_GetItem(hHeader, m_nLastHeaderID, &hColumn);
+
+    hColumn.fmt &= ~(HDF_SORTDOWN | HDF_SORTUP);
+    if (m_SortOrder == SortOrder::Ascending)
+        hColumn.fmt |= HDF_SORTDOWN;
+    else if (m_SortOrder == SortOrder::Descending)
+        hColumn.fmt |= HDF_SORTUP;
+    Header_SetItem(hHeader, m_nLastHeaderID, &hColumn);
+}
+
+void
+CAtomWindow::_UpdateItems()
+{
+    // Sort the list
+    SortContext ctx = { m_nLastHeaderID, m_SortOrder };
+    ListView_SortItems(m_hList, s_CompareFunc, &ctx);
+}

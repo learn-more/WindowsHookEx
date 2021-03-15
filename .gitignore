@@ -6,3 +6,4 @@ Release
 *.suo
 *.user
 src/bin
+src/generated_git_version.h

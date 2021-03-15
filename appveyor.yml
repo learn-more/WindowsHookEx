@@ -20,8 +20,14 @@ build:
   verbosity: minimal
 
 after_build:
-  cmd:
-    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.exe %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.pdb %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.dll %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.pdb
+  cmd: >-
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.exe
+
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\WindowsHookEx-%PLATFORM%.pdb
+
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.dll
+
+    7z a WindowsHookEx-%PLATFORM%.zip %APPVEYOR_BUILD_FOLDER%\src\bin\HookDll-%PLATFORM%.pdb
 
 test: off
 

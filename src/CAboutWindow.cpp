@@ -7,6 +7,7 @@
 //
 
 #include "Wizard-2020.h"
+#include "version.h"
 #include <Richedit.h>
 
 static const int iHeaderHeight = 55;
@@ -163,6 +164,7 @@ CAboutWindow::_OnCreate()
     SendMessageW(m_hAbout, EM_SETEVENTMASK, 0, ENM_LINK | ENM_MOUSEEVENTS);
 
     Edit_SetText(m_hAbout, L"https://github.com/learn-more/WindowsHookEx\r\n"
+    L"Version: " TEXT(GIT_VERSION_STR) L"\r\n"
     L"License: MIT\r\n"
     L"\r\n"
     L"UI Framework: Wizard-2020 Example\r\n"

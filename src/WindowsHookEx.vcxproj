@@ -106,6 +106,12 @@
       <AdditionalManifestFiles>
       </AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)GenVersion.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating version header</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -130,6 +136,15 @@
       <AdditionalManifestFiles>
       </AdditionalManifestFiles>
     </Manifest>
+    <ResourceCompile>
+      <PreprocessorDefinitions>RC_64;_USING_V110_SDK71_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)GenVersion.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating version header</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -161,6 +176,12 @@
       <AdditionalManifestFiles>
       </AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)GenVersion.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating version header</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -191,6 +212,15 @@
       <AdditionalManifestFiles>
       </AdditionalManifestFiles>
     </Manifest>
+    <ResourceCompile>
+      <PreprocessorDefinitions>RC_64;_USING_V110_SDK71_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>$(SolutionDir)GenVersion.bat</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Generating version header</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CAboutWindow.cpp" />
@@ -210,6 +240,7 @@
     <ClInclude Include="CPage.h" />
     <ClInclude Include="CSecondPage.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="Wizard-2020.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils.h" />
@@ -232,6 +263,14 @@
     <ProjectReference Include="HookDll\HookDll.vcxproj">
       <Project>{84563536-839e-4b4e-bb7c-4a6321185cce}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\cog.ico" />
+    <Image Include="res\icon.ico" />
+    <Image Include="res\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WindowsHookEx.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

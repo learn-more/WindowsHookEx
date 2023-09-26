@@ -192,7 +192,9 @@ CHookOutputPage::UpdateDPI()
 void
 CHookOutputPage::UpdateMenu(HMENU hMenu)
 {
-    AppendMenuW(hMenu, MF_STRING, IDC_MENU_CLEAR_LIST, L"Clear list");
+    std::wstring clearText = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_MENU_CLEAR_LIST);
+
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_CLEAR_LIST, clearText.c_str());
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 }
 
@@ -201,7 +203,9 @@ CHookOutputPage::_OnCommand(WPARAM wParam)
 {
     switch (LOWORD(wParam))
     {
-    case IDC_MENU_CLEAR_LIST: ListView_DeleteAllItems(m_hList); break;
+    case IDC_MENU_CLEAR_LIST:
+        ListView_DeleteAllItems(m_hList);
+        break;
     }
 
     return 0;

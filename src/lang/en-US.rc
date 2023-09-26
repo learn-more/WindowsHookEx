@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -15,9 +15,11 @@ BEGIN
     IDS_CANCEL                      "Close"
     IDS_FINISH                      "Unhook"
     IDS_OK                          "OK"
+    IDS_MENU_VIEW_ATOMS             "View Atoms"
+    IDS_MENU_ABOUT                  "About"
 
-    IDS_FIRSTPAGE_HEADER            "Select a configuration"
-    IDS_FIRSTPAGE_SUBHEADER         "Specify the hook type, and additional options"
+    IDS_SELECTHOOKPAGE_HEADER       "Select a configuration"
+    IDS_SELECTHOOKPAGE_SUBHEADER    "Specify the hook type, and additional options"
 
     IDS_OPT_HOST_HOOK_PROC          "Use a hook procedure in the .exe instead of in the .dll"
     IDS_OPT_IGNORE_OWN_MSG          "Ignore hook messages for the result page (recommended)"
@@ -26,7 +28,7 @@ BEGIN
     IDS_OPT_BREAK_ON_FIRST_MSG      "Break into the debugger when the first hook callback is executed"
 
     IDS_ABOUT_TITLE                 "About %s"
-    IDS_ABOUT_SUBHEADER             "Copyright © 2020 Mark Jansen"
+    IDS_ABOUT_SUBHEADER             "Copyright (c) 2020-2023 Mark Jansen"
     IDS_ABOUT_HEADER                "SetWindowsHookEx test utility"
 
     IDS_ATOM_TITLE                  "System Atoms"
@@ -44,5 +46,6 @@ BEGIN
     IDS_THREAD                      "Thread"
     IDS_HOOK                        "Hook"
     IDS_INFO                        "Info"
+    IDS_MENU_CLEAR_LIST             "Clear list"
 
 END

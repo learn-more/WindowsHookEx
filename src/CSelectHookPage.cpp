@@ -16,8 +16,8 @@ CSelectHookPage::_OnCreate()
     HINSTANCE hInstance = m_pMainWindow->GetHInstance();
 
     // Load resources.
-    m_wstrHeader = LoadStringAsWstr(hInstance, IDS_FIRSTPAGE_HEADER);
-    m_wstrSubHeader = LoadStringAsWstr(hInstance, IDS_FIRSTPAGE_SUBHEADER);
+    m_wstrHeader = LoadStringAsWstr(hInstance, IDS_SELECTHOOKPAGE_HEADER);
+    m_wstrSubHeader = LoadStringAsWstr(hInstance, IDS_SELECTHOOKPAGE_SUBHEADER);
  
     // Set up the ComboBox.
     m_hComboHookType = CreateWindowExW(0, WC_COMBOBOX, L"", WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_TABSTOP, 0, 0, 0, 0, m_hWnd, reinterpret_cast<HMENU>(IDC_HOOKTYPE), nullptr, nullptr);

@@ -75,9 +75,12 @@ CMainWindow::_OnMenuButton()
 
     m_pCurrentPage->UpdateMenu(hMenu);
 
-    AppendMenuW(hMenu, MF_STRING | (m_pAtomWindow ? MF_CHECKED : 0), IDC_MENU_VIEW_ATOMS, L"View Atoms");
+    std::wstring viewAtoms = LoadStringAsWstr(m_hInstance, IDS_MENU_VIEW_ATOMS);
+    std::wstring aboutText = LoadStringAsWstr(m_hInstance, IDS_MENU_ABOUT);
+
+    AppendMenuW(hMenu, MF_STRING | (m_pAtomWindow ? MF_CHECKED : 0), IDC_MENU_VIEW_ATOMS, viewAtoms.c_str());
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
-    AppendMenuW(hMenu, MF_STRING, IDC_MENU_ABOUT, L"About");
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_ABOUT, aboutText.c_str());
 
     SetForegroundWindow(m_hWnd);
     RECT rc;

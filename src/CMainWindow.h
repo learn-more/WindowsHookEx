@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -44,8 +44,8 @@ private:
     LOGFONTW m_lfBoldGuiFont;
     LOGFONTW m_lfGuiFont;
     CPage* m_pCurrentPage;
-    std::unique_ptr<CFirstPage> m_pFirstPage;
-    std::unique_ptr<CSecondPage> m_pSecondPage;
+    std::unique_ptr<CSelectHookPage> m_pFirstPage;
+    std::unique_ptr<CHookOutputPage> m_pSecondPage;
     std::unique_ptr<CAtomWindow> m_pAtomWindow;
     std::unique_ptr<Gdiplus::Bitmap> m_pLogoBitmap;
     HICON m_hCogIcon;

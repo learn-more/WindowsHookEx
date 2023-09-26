@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -8,10 +8,10 @@
 
 #pragma once
 
-class CFirstPage : public CPage
+class CSelectHookPage : public CPage
 {
 public:
-    static std::unique_ptr<CFirstPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CFirstPage>(pMainWindow); }
+    static std::unique_ptr<CSelectHookPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CSelectHookPage>(pMainWindow); }
     virtual void SwitchTo() override;
     virtual void OnBack() override;
     virtual void OnNext() override;
@@ -38,7 +38,7 @@ private:
 
     SHARED_SETTINGS* m_Settings;
 
-    CFirstPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
+    CSelectHookPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     LRESULT _OnCreate();
     LRESULT _OnDestroy();
     LRESULT _OnSize();

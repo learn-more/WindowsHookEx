@@ -225,9 +225,9 @@
   <ItemGroup>
     <ClCompile Include="CAboutWindow.cpp" />
     <ClCompile Include="CAtomWindow.cpp" />
-    <ClCompile Include="CFirstPage.cpp" />
+    <ClCompile Include="CSelectHookPage.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
-    <ClCompile Include="CSecondPage.cpp" />
+    <ClCompile Include="CHookOutputPage.cpp" />
     <ClCompile Include="AlternateCallbacks.cpp" />
     <ClCompile Include="Wizard-2020.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -235,10 +235,10 @@
   <ItemGroup>
     <ClInclude Include="CAboutWindow.h" />
     <ClInclude Include="CAtomWindow.h" />
-    <ClInclude Include="CFirstPage.h" />
+    <ClInclude Include="CSelectHookPage.h" />
     <ClInclude Include="CMainWindow.h" />
     <ClInclude Include="CPage.h" />
-    <ClInclude Include="CSecondPage.h" />
+    <ClInclude Include="CHookOutputPage.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Wizard-2020.h" />

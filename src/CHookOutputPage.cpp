@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -21,7 +21,7 @@ const static int g_ColumnWidths[] = {
 
 
 LRESULT
-CSecondPage::_OnCreate()
+CHookOutputPage::_OnCreate()
 {
     // Set up the ListView.
     m_hList = CreateWindowExW(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL, 0, 0, 0, 0, m_hWnd, nullptr, nullptr, nullptr);
@@ -62,7 +62,7 @@ CSecondPage::_OnCreate()
 }
 
 LRESULT
-CSecondPage::_OnDestroy()
+CHookOutputPage::_OnDestroy()
 {
     HookDll_UninstallHook();
 
@@ -70,7 +70,7 @@ CSecondPage::_OnDestroy()
 }
 
 LRESULT
-CSecondPage::_OnSize()
+CHookOutputPage::_OnSize()
 {
     // Get the window size.
     RECT rcWindow;
@@ -91,9 +91,9 @@ CSecondPage::_OnSize()
 }
 
 LRESULT CALLBACK
-CSecondPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+CHookOutputPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    CSecondPage* pPage = InstanceFromWndProc<CSecondPage, CPage, &CSecondPage::CPage::m_hWnd>(hWnd, uMsg, lParam);
+    CHookOutputPage* pPage = InstanceFromWndProc<CHookOutputPage, CPage, &CHookOutputPage::CPage::m_hWnd>(hWnd, uMsg, lParam);
 
     if (pPage)
     {
@@ -111,7 +111,7 @@ CSecondPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 void
-CSecondPage::SwitchTo()
+CHookOutputPage::SwitchTo()
 {
     SHARED_SETTINGS* Settings = HookDll_GetSettings();
     int idHook = Settings->idHook;
@@ -135,21 +135,21 @@ CSecondPage::SwitchTo()
 }
 
 void
-CSecondPage::OnBack()
+CHookOutputPage::OnBack()
 {
     HookDll_UninstallHook();
     m_Active = false;
 }
 
 void
-CSecondPage::OnNext()
+CHookOutputPage::OnNext()
 {
     HookDll_UninstallHook();
     m_pMainWindow->EnableNextButton(FALSE, 0);
 }
 
 void
-CSecondPage::_UpdateSubHeader()
+CHookOutputPage::_UpdateSubHeader()
 {
     WCHAR Info[512 * 4];
 
@@ -185,19 +185,19 @@ CSecondPage::_UpdateSubHeader()
 }
 
 void
-CSecondPage::UpdateDPI()
+CHookOutputPage::UpdateDPI()
 {
 }
 
 void
-CSecondPage::UpdateMenu(HMENU hMenu)
+CHookOutputPage::UpdateMenu(HMENU hMenu)
 {
     AppendMenuW(hMenu, MF_STRING, IDC_MENU_CLEAR_LIST, L"Clear list");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 }
 
 LRESULT
-CSecondPage::_OnCommand(WPARAM wParam)
+CHookOutputPage::_OnCommand(WPARAM wParam)
 {
     switch (LOWORD(wParam))
     {
@@ -208,7 +208,7 @@ CSecondPage::_OnCommand(WPARAM wParam)
 }
 
 LRESULT
-CSecondPage::OnTimer(WPARAM wParam)
+CHookOutputPage::OnTimer(WPARAM wParam)
 {
     static WCHAR Buffer[512];
 

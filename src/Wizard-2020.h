@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -35,15 +35,15 @@
 #include "utils.h"
 
 // Forward declarations
-class CFirstPage;
+class CSelectHookPage;
 class CMainWindow;
 class CPage;
-class CSecondPage;
+class CHookOutputPage;
 
 #include "HookDll/Shared.h"
 #include "CPage.h"
-#include "CFirstPage.h"
-#include "CSecondPage.h"
+#include "CSelectHookPage.h"
+#include "CHookOutputPage.h"
 #include "CAboutWindow.h"
 #include "CAtomWindow.h"
 #include "CMainWindow.h"

@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -8,10 +8,10 @@
 
 #pragma once
 
-class CSecondPage : public CPage
+class CHookOutputPage : public CPage
 {
 public:
-    static std::unique_ptr<CSecondPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CSecondPage>(pMainWindow); }
+    static std::unique_ptr<CHookOutputPage> Create(CMainWindow* pMainWindow) { return CPage::Create<CHookOutputPage>(pMainWindow); }
 
     HWND GetList() const { return m_hList; }
     virtual void SwitchTo() override;
@@ -36,7 +36,7 @@ private:
     std::vector<HOOK_EVENT> m_Events;
     std::unordered_map<DWORD, std::wstring> m_Processes;
 
-    CSecondPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
+    CHookOutputPage(CMainWindow* pMainWindow) : CPage(pMainWindow) {}
     void _UpdateSubHeader();
     LRESULT _OnCreate();
     LRESULT _OnDestroy();

@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -196,8 +196,8 @@ CMainWindow::_OnCreate()
     SendMessageW(m_hMenu, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)m_hCogIcon);
 
     // Create all pages.
-    m_pFirstPage = CFirstPage::Create(this);
-    m_pSecondPage = CSecondPage::Create(this);
+    m_pFirstPage = CSelectHookPage::Create(this);
+    m_pSecondPage = CHookOutputPage::Create(this);
     _SwitchPage(m_pFirstPage.get());
 
     // Set the main window size.

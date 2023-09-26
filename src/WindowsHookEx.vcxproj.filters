@@ -20,10 +20,10 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CFirstPage.cpp">
+    <ClCompile Include="CSelectHookPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSecondPage.cpp">
+    <ClCompile Include="CHookOutputPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Wizard-2020.cpp">
@@ -58,10 +58,10 @@
     <ClInclude Include="win32_wrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CFirstPage.h">
+    <ClInclude Include="CSelectHookPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSecondPage.h">
+    <ClInclude Include="CHookOutputPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wizard-2020.h">

@@ -1,6 +1,6 @@
 //
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
-// Copyright (c) 2020 Mark Jansen
+// Copyright (c) 2020-2023 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1
 // Copyright (c) 2020 Colin Finck, ENLYZE GmbH
 // SPDX-License-Identifier: MIT
@@ -11,7 +11,7 @@
 #define IDC_HOOKTYPE    600
 
 LRESULT
-CFirstPage::_OnCreate()
+CSelectHookPage::_OnCreate()
 {
     HINSTANCE hInstance = m_pMainWindow->GetHInstance();
 
@@ -66,7 +66,7 @@ CFirstPage::_OnCreate()
 }
 
 LRESULT
-CFirstPage::_OnDestroy()
+CSelectHookPage::_OnDestroy()
 {
     // Ensure we do not break while shutting down!
     m_Settings->BreakOnUnload = FALSE;
@@ -75,7 +75,7 @@ CFirstPage::_OnDestroy()
 }
 
 LRESULT
-CFirstPage::_OnSize()
+CSelectHookPage::_OnSize()
 {
     // Get the window size.
     RECT rcWindow;
@@ -129,9 +129,9 @@ CFirstPage::_OnSize()
 }
 
 LRESULT CALLBACK
-CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+CSelectHookPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    CFirstPage* pPage = InstanceFromWndProc<CFirstPage, CPage, &CFirstPage::CPage::m_hWnd>(hWnd, uMsg, lParam);
+    CSelectHookPage* pPage = InstanceFromWndProc<CSelectHookPage, CPage, &CSelectHookPage::CPage::m_hWnd>(hWnd, uMsg, lParam);
 
     if (pPage)
     {
@@ -148,7 +148,7 @@ CFirstPage::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 LRESULT
-CFirstPage::_OnCommand(WPARAM wParam, LPARAM /*lParam*/)
+CSelectHookPage::_OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
     if (LOWORD(wParam) == IDC_HOOKTYPE)
     {
@@ -170,7 +170,7 @@ CFirstPage::_OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 }
 
 void
-CFirstPage::SwitchTo()
+CSelectHookPage::SwitchTo()
 {
     m_pMainWindow->SetHeader(&m_wstrHeader, &m_wstrSubHeader);
     m_pMainWindow->EnableBackButton(FALSE);
@@ -179,13 +179,13 @@ CFirstPage::SwitchTo()
 }
 
 void
-CFirstPage::OnBack()
+CSelectHookPage::OnBack()
 {
 
 }
 
 void
-CFirstPage::OnNext()
+CSelectHookPage::OnNext()
 {
     // Configure hook type.
     int index = ComboBox_GetCurSel(m_hComboHookType);
@@ -210,7 +210,7 @@ CFirstPage::OnNext()
 }
 
 void
-CFirstPage::UpdateDPI()
+CSelectHookPage::UpdateDPI()
 {
     HFONT hGuiFont = m_pMainWindow->GetGuiFont();
 

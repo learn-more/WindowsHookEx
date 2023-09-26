@@ -28,7 +28,7 @@ BEGIN
     IDS_OPT_BREAK_ON_FIRST_MSG      "Break into the debugger when the first hook callback is executed"
 
     IDS_ABOUT_TITLE                 "About %s"
-    IDS_ABOUT_SUBHEADER             "Copyright (c) 2020-2023 Mark Jansen"
+    IDS_ABOUT_SUBHEADER             "Copyright © 2020-2023 Mark Jansen"
     IDS_ABOUT_HEADER                "SetWindowsHookEx test utility"
 
     IDS_ATOM_TITLE                  "System Atoms"

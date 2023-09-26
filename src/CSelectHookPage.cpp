@@ -13,6 +13,9 @@
 LRESULT
 CSelectHookPage::_OnCreate()
 {
+    // Get the DPI setting for the monitor where the window is shown.
+    m_wCurrentDPI = GetWindowDPI(m_hWnd);
+
     HINSTANCE hInstance = m_pMainWindow->GetHInstance();
 
     // Load resources.
@@ -84,9 +87,9 @@ CSelectHookPage::_OnSize()
     // The text is drawn on most of the window, so invalidate that.
     InvalidateRect(m_hWnd, &rcWindow, TRUE);
 
-    const int iControlPadding = m_pMainWindow->DefaultControlPaddingPx();
-    const int iButtonHeight = m_pMainWindow->DefaultButtonHeightPx();
-    //const int iButtonWidth = m_pMainWindow->DefaultButtonWidthPx();
+    const int iControlPadding = MulDiv(iUnifiedControlPadding, m_wCurrentDPI, iWindowsReferenceDPI);
+    const int iButtonHeight = MulDiv(iUnifiedButtonHeight, m_wCurrentDPI, iWindowsReferenceDPI);
+    //const int iButtonWidth = MulDiv(iUnifiedButtonWidth, m_wCurrentDPI, iWindowsReferenceDPI);
 
     HDWP hDwp = BeginDeferWindowPos(7);
 
@@ -212,6 +215,8 @@ CSelectHookPage::OnNext()
 void
 CSelectHookPage::UpdateDPI()
 {
+    m_wCurrentDPI = GetWindowDPI(m_hWnd);
+
     HFONT hGuiFont = m_pMainWindow->GetGuiFont();
 
     // Update the control fonts.

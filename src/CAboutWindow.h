@@ -29,6 +29,7 @@ private:
 
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;
+    WORD m_wCurrentDPI;
 
     CAboutWindow(CMainWindow* pMainWindow);
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -38,7 +39,7 @@ private:
     LRESULT _OnNotify(WPARAM wParam, LPARAM lParam);
     LRESULT _OnCreate();
     LRESULT _OnDestroy();
-    LRESULT _OnDpiChanged(LPARAM lParam);
+    LRESULT _OnDpiChanged(WPARAM wParam, LPARAM lParam);
     LRESULT _OnGetMinMaxInfo(LPARAM lParam);
     LRESULT _OnPaint();
     LRESULT _OnSize();

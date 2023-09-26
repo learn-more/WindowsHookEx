@@ -51,6 +51,9 @@ class CHookOutputPage;
 // Wizard-2020.cpp
 extern const int iFontReferenceDPI;
 extern const int iWindowsReferenceDPI;
+extern const int iUnifiedControlPadding;
+extern const int iUnifiedButtonHeight;
+extern const int iUnifiedButtonWidth;
 extern const WCHAR wszAppName[];
 
 // AlternateCallbacks.cpp

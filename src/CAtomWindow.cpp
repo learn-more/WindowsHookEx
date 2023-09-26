@@ -43,7 +43,7 @@ CAtomWindow::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             case WM_CREATE: return pAtomWindow->_OnCreate();
             case WM_DESTROY: return pAtomWindow->_OnDestroy();
-            case WM_DPICHANGED: return pAtomWindow->_OnDpiChanged(lParam);
+            case WM_DPICHANGED: return pAtomWindow->_OnDpiChanged(wParam, lParam);
             case WM_GETMINMAXINFO: return pAtomWindow->_OnGetMinMaxInfo(lParam);
             case WM_SIZE: return pAtomWindow->_OnSize();
             case WM_TIMER: return pAtomWindow->_OnTimer(wParam);
@@ -57,6 +57,9 @@ CAtomWindow::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT
 CAtomWindow::_OnCreate()
 {
+    // Get the DPI setting for the monitor where the window is shown.
+    m_wCurrentDPI = GetWindowDPI(m_hWnd);
+
     m_wstrGlobalAtom = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_GLOBAL_ATOM);
     m_wstrUserAtom = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_USER_ATOM);
 
@@ -80,8 +83,8 @@ CAtomWindow::_OnCreate()
     ListView_InsertColumn(m_hList, m_nColumns++, &lvColumn);
 
     // Set the window size.
-    int iHeight = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
-    int iWidth = MulDiv(iMinWindowWidth, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
+    int iHeight = MulDiv(iMinWindowHeight, m_wCurrentDPI, iWindowsReferenceDPI);
+    int iWidth = MulDiv(iMinWindowWidth, m_wCurrentDPI, iWindowsReferenceDPI);
     SetWindowPos(m_hWnd, nullptr, 0, 0, iWidth, iHeight, SWP_NOMOVE);
 
     _UpdateHeader();
@@ -114,12 +117,12 @@ CAtomWindow::_OnDestroy()
 }
 
 LRESULT
-CAtomWindow::_OnDpiChanged(LPARAM lParam)
+CAtomWindow::_OnDpiChanged(WPARAM wParam, LPARAM lParam)
 {
+    m_wCurrentDPI = LOWORD(wParam);
+
     // Redraw the entire window on every DPI change.
-    RECT rcWindow;
-    GetClientRect(m_hWnd, &rcWindow);
-    InvalidateRect(m_hWnd, &rcWindow, FALSE);
+    InvalidateRect(m_hWnd, nullptr, FALSE);
 
     // Use the suggested new window size.
     RECT* const prcNewWindow = reinterpret_cast<RECT*>(lParam);
@@ -137,8 +140,8 @@ CAtomWindow::_OnGetMinMaxInfo(LPARAM lParam)
 {
     PMINMAXINFO pMinMaxInfo = reinterpret_cast<PMINMAXINFO>(lParam);
 
-    pMinMaxInfo->ptMinTrackSize.x = MulDiv(iMinWindowWidth, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
-    pMinMaxInfo->ptMinTrackSize.y = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
+    pMinMaxInfo->ptMinTrackSize.x = MulDiv(iMinWindowWidth, m_wCurrentDPI, iWindowsReferenceDPI);
+    pMinMaxInfo->ptMinTrackSize.y = MulDiv(iMinWindowHeight, m_wCurrentDPI, iWindowsReferenceDPI);
 
     return 0;
 }
@@ -153,7 +156,7 @@ CAtomWindow::_OnSize()
     // Move the button.
     HDWP hDwp = BeginDeferWindowPos(1);
 
-    const int iControlPadding = m_pMainWindow->DefaultControlPaddingPx();
+    const int iControlPadding = MulDiv(iUnifiedControlPadding, m_wCurrentDPI, iWindowsReferenceDPI);
 
     int iListX = iControlPadding;
     int iListY = iControlPadding;

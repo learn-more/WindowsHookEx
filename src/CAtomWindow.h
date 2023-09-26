@@ -60,13 +60,14 @@ private:
 
     std::wstring m_wstrGlobalAtom;
     std::wstring m_wstrUserAtom;
+    WORD m_wCurrentDPI;
 
     CAtomWindow(CMainWindow* pMainWindow);
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     LRESULT _OnNotify(WPARAM wParam, LPARAM lParam);
     LRESULT _OnCreate();
     LRESULT _OnDestroy();
-    LRESULT _OnDpiChanged(LPARAM lParam);
+    LRESULT _OnDpiChanged(WPARAM wParam, LPARAM lParam);
     LRESULT _OnGetMinMaxInfo(LPARAM lParam);
     LRESULT _OnTimer(WPARAM wParam);
     LRESULT _OnSize();

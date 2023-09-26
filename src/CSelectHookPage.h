@@ -35,6 +35,7 @@ private:
 
     std::wstring m_wstrHeader;
     std::wstring m_wstrSubHeader;
+    WORD m_wCurrentDPI;
 
     SHARED_SETTINGS* m_Settings;
 

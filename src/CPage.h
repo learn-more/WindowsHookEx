@@ -47,7 +47,7 @@ protected:
             0,
             T::_wszWndClass,
             L"",
-            WS_CHILD,
+            WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
             0,
             0,
             0,

@@ -12,15 +12,11 @@ class CMainWindow
 {
 public:
     WORD GetCurrentDPI() const { return m_wCurrentDPI; }
-    HFONT GetGuiFont() const { return m_hGuiFont; }
-    HFONT GetBoldGuiFont() const { return m_hBoldGuiFont; }
+    HFONT GetGuiFont() const { return m_hGuiFont.get(); }
+    HFONT GetBoldGuiFont() const { return m_hBoldGuiFont.get(); }
     HINSTANCE GetHInstance() const { return m_hInstance; }
     HWND GetHwnd() const { return m_hWnd; }
     Gdiplus::Bitmap* GetLogoBitmap() { return m_pLogoBitmap.get(); }
-
-    int DefaultControlPaddingPx() const;
-    int DefaultButtonHeightPx() const;
-    int DefaultButtonWidthPx() const;
 
     static std::unique_ptr<CMainWindow> Create(HINSTANCE hInstance, int nShowCmd);
     void EnableBackButton(BOOL bEnable);
@@ -31,8 +27,8 @@ public:
 private:
     static constexpr WCHAR _wszWndClass[] = L"MainWndClass";
 
-    HFONT m_hBoldGuiFont;
-    HFONT m_hGuiFont;
+    sr::unique_resource<HFONT, decltype(DeleteObject)*> m_hBoldGuiFont;
+    sr::unique_resource<HFONT, decltype(DeleteObject)*> m_hGuiFont;
     HINSTANCE m_hInstance;
     HWND m_hWnd;
     HWND m_hLine;

@@ -41,7 +41,7 @@ CAboutWindow::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             case WM_NOTIFY: return pAboutWindow->_OnNotify(wParam, lParam);
             case WM_CREATE: return pAboutWindow->_OnCreate();
             case WM_DESTROY: return pAboutWindow->_OnDestroy();
-            case WM_DPICHANGED: return pAboutWindow->_OnDpiChanged(lParam);
+            case WM_DPICHANGED: return pAboutWindow->_OnDpiChanged(wParam, lParam);
             case WM_GETMINMAXINFO: return pAboutWindow->_OnGetMinMaxInfo(lParam);
             case WM_PAINT: return pAboutWindow->_OnPaint();
             case WM_SIZE: return pAboutWindow->_OnSize();
@@ -142,6 +142,9 @@ CAboutWindow::_OnNotify(WPARAM wParam, LPARAM lParam)
 LRESULT
 CAboutWindow::_OnCreate()
 {
+    // Get the DPI setting for the monitor where the window is shown.
+    m_wCurrentDPI = GetWindowDPI(m_hWnd);
+
     HINSTANCE hInstance = m_pMainWindow->GetHInstance();
 
     // Load resources.
@@ -168,13 +171,13 @@ CAboutWindow::_OnCreate()
     L"License: MIT\r\n"
     L"\r\n"
     L"UI Framework: Wizard-2020 Example\r\n"
-    L"Copyright © 2020 Colin Finck, ENLYZE GmbH\r\n"
+    L"Copyright Â© 2020 Colin Finck, ENLYZE GmbH\r\n"
     L"https://github.com/enlyze/Wizard-2020\r\n"
     L"License: MIT\r\n");
 
     // Set the window size.
-    int iHeight = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
-    int iWidth = MulDiv(iMinWindowWidth, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
+    int iHeight = MulDiv(iMinWindowHeight, m_wCurrentDPI, iWindowsReferenceDPI);
+    int iWidth = MulDiv(iMinWindowWidth, m_wCurrentDPI, iWindowsReferenceDPI);
     SetWindowPos(m_hWnd, nullptr, 0, 0, iWidth, iHeight, SWP_NOMOVE);
 
     // Finally, show the window.
@@ -196,12 +199,12 @@ CAboutWindow::_OnDestroy()
 }
 
 LRESULT
-CAboutWindow::_OnDpiChanged(LPARAM lParam)
+CAboutWindow::_OnDpiChanged(WPARAM wParam, LPARAM lParam)
 {
+    m_wCurrentDPI = LOWORD(wParam);
+
     // Redraw the entire window on every DPI change.
-    RECT rcWindow;
-    GetClientRect(m_hWnd, &rcWindow);
-    InvalidateRect(m_hWnd, &rcWindow, FALSE);
+    InvalidateRect(m_hWnd, nullptr, FALSE);
 
     // Update the control fonts.
     SendMessageW(m_hOk, WM_SETFONT, reinterpret_cast<WPARAM>(m_pMainWindow->GetGuiFont()), MAKELPARAM(TRUE, 0));
@@ -223,8 +226,8 @@ CAboutWindow::_OnGetMinMaxInfo(LPARAM lParam)
 {
     PMINMAXINFO pMinMaxInfo = reinterpret_cast<PMINMAXINFO>(lParam);
 
-    pMinMaxInfo->ptMinTrackSize.x = MulDiv(iMinWindowWidth, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
-    pMinMaxInfo->ptMinTrackSize.y = MulDiv(iMinWindowHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
+    pMinMaxInfo->ptMinTrackSize.x = MulDiv(iMinWindowWidth, m_wCurrentDPI, iWindowsReferenceDPI);
+    pMinMaxInfo->ptMinTrackSize.y = MulDiv(iMinWindowHeight, m_wCurrentDPI, iWindowsReferenceDPI);
 
     return 0;
 }
@@ -236,8 +239,6 @@ CAboutWindow::_OnPaint()
     RECT rcWindow;
     GetClientRect(m_hWnd, &rcWindow);
 
-    WORD wCurrentDPI = m_pMainWindow->GetCurrentDPI();
-
     // Begin a double-buffered paint.
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(m_hWnd, &ps);
@@ -247,25 +248,25 @@ CAboutWindow::_OnPaint()
 
     // Draw a white rectangle completely filling the header of the window.
     RECT rcHeader = rcWindow;
-    rcHeader.bottom = MulDiv(iHeaderHeight, wCurrentDPI, iWindowsReferenceDPI);
+    rcHeader.bottom = MulDiv(iHeaderHeight, m_wCurrentDPI, iWindowsReferenceDPI);
     FillRect(hMemDC, &rcHeader, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
 
     // Draw the header text.
     RECT rcHeaderText = rcHeader;
-    rcHeaderText.left = MulDiv(15, wCurrentDPI, iWindowsReferenceDPI);
-    rcHeaderText.top = MulDiv(15, wCurrentDPI, iWindowsReferenceDPI);
+    rcHeaderText.left = MulDiv(15, m_wCurrentDPI, iWindowsReferenceDPI);
+    rcHeaderText.top = MulDiv(15, m_wCurrentDPI, iWindowsReferenceDPI);
     SelectObject(hMemDC, m_pMainWindow->GetBoldGuiFont());
     DrawTextW(hMemDC, m_wstrHeader.c_str(), static_cast<int>(m_wstrHeader.size()), &rcHeaderText, 0);
 
     // Draw the subheader text.
     RECT rcSubHeaderText = rcHeader;
-    rcSubHeaderText.left = MulDiv(20, wCurrentDPI, iWindowsReferenceDPI);
-    rcSubHeaderText.top = MulDiv(32, wCurrentDPI, iWindowsReferenceDPI);
+    rcSubHeaderText.left = MulDiv(20, m_wCurrentDPI, iWindowsReferenceDPI);
+    rcSubHeaderText.top = MulDiv(32, m_wCurrentDPI, iWindowsReferenceDPI);
     SelectObject(hMemDC, m_pMainWindow->GetGuiFont());
     DrawTextW(hMemDC, m_wstrSubHeader.c_str(), static_cast<int>(m_wstrSubHeader.size()), &rcSubHeaderText, 0);
 
     // Draw the logo into the upper right corner.
-    const int iLogoPadding = MulDiv(5, wCurrentDPI, iWindowsReferenceDPI);
+    const int iLogoPadding = MulDiv(5, m_wCurrentDPI, iWindowsReferenceDPI);
     int iDestBitmapHeight = rcHeader.bottom - 2 * iLogoPadding;
     Gdiplus::Bitmap* bitmap = m_pMainWindow->GetLogoBitmap();
     int iDestBitmapWidth = bitmap->GetWidth() * iDestBitmapHeight / bitmap->GetHeight();
@@ -299,15 +300,15 @@ CAboutWindow::_OnSize()
 
     // Redraw the header on every size change.
     RECT rcHeader = rcWindow;
-    rcHeader.bottom = MulDiv(iHeaderHeight, m_pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
+    rcHeader.bottom = MulDiv(iHeaderHeight, m_wCurrentDPI, iWindowsReferenceDPI);
     InvalidateRect(m_hWnd, &rcHeader, FALSE);
 
     // Move the button.
     HDWP hDwp = BeginDeferWindowPos(3);
 
-    const int iControlPadding = m_pMainWindow->DefaultControlPaddingPx();
-    const int iButtonHeight = m_pMainWindow->DefaultButtonHeightPx();
-    const int iButtonWidth = m_pMainWindow->DefaultButtonWidthPx();
+    const int iControlPadding = MulDiv(iUnifiedControlPadding, m_wCurrentDPI, iWindowsReferenceDPI);
+    const int iButtonHeight = MulDiv(iUnifiedButtonHeight, m_wCurrentDPI, iWindowsReferenceDPI);
+    const int iButtonWidth = MulDiv(iUnifiedButtonWidth, m_wCurrentDPI, iWindowsReferenceDPI);
     int iButtonX = rcWindow.right - iControlPadding - iButtonWidth;
     int iButtonY = rcWindow.bottom - iControlPadding - iButtonHeight;
     if (hDwp)
@@ -366,7 +367,7 @@ CAboutWindow::Create(CMainWindow* pMainWindow)
         return nullptr;
     }
 
-    const int iControlPadding = pMainWindow->DefaultControlPaddingPx();
+    const int iControlPadding = MulDiv(iUnifiedControlPadding, pMainWindow->GetCurrentDPI(), iWindowsReferenceDPI);
     POINT pt{ iControlPadding, iControlPadding };
     ClientToScreen(pMainWindow->GetHwnd(), &pt);
 

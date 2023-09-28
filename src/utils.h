@@ -33,6 +33,7 @@ InstanceFromWndProc(HWND hWnd, UINT uMsg, LPARAM lParam)
 }
 
 // utils.cpp
+void ErrorBox(const std::wstring& wstrMessage);
 WORD GetWindowDPI(HWND hWnd);
 std::wstring LoadStringAsWstr(HINSTANCE hInstance, UINT uID);
 std::unique_ptr<Gdiplus::Bitmap> LoadPNGAsGdiplusBitmap(HINSTANCE hInstance, UINT uID);

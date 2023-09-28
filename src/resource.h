@@ -51,4 +51,7 @@
 #define IDS_HOOK                        1502
 #define IDS_INFO                        1503
 #define IDS_MENU_CLEAR_LIST             1504
+#define IDS_MENU_EXPORT_CSV             1505
+#define IDS_SAVE_FILTER                 1506
+#define IDS_SAVE_TITLE                  1507
 

@@ -8,9 +8,11 @@
 
 #include "Wizard-2020.h"
 #include <cassert>
+#include <algorithm>
 #include "HookDll/Shared.h"
 
 #define IDC_MENU_CLEAR_LIST 600
+#define IDC_MENU_EXPORT_CSV 601
 
 
 const static int g_ColumnWidths[] = {
@@ -193,8 +195,10 @@ void
 CHookOutputPage::UpdateMenu(HMENU hMenu)
 {
     std::wstring clearText = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_MENU_CLEAR_LIST);
+    std::wstring exportText = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_MENU_EXPORT_CSV);
 
     AppendMenuW(hMenu, MF_STRING, IDC_MENU_CLEAR_LIST, clearText.c_str());
+    AppendMenuW(hMenu, MF_STRING, IDC_MENU_EXPORT_CSV, exportText.c_str());
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 }
 
@@ -205,6 +209,9 @@ CHookOutputPage::_OnCommand(WPARAM wParam)
     {
     case IDC_MENU_CLEAR_LIST:
         ListView_DeleteAllItems(m_hList);
+        break;
+    case IDC_MENU_EXPORT_CSV:
+        _OnExportCsv();
         break;
     }
 
@@ -294,4 +301,49 @@ CHookOutputPage::OnTimer(WPARAM wParam)
     }
 
     return 0;
+}
+
+void
+CHookOutputPage::_OnExportCsv()
+{
+    std::wstring wstrSaveFilter = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_SAVE_FILTER);
+    std::replace(wstrSaveFilter.begin(), wstrSaveFilter.end(), L'|', L'\0');
+
+    std::wstring wstrSaveTitle = LoadStringAsWstr(m_pMainWindow->GetHInstance(), IDS_SAVE_TITLE);
+
+
+    std::wstring wstrFileToSave = std::wstring(MAX_PATH, L'\0');
+
+    OPENFILENAMEW ofn = {};
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = m_hWnd;
+    ofn.lpstrFilter = wstrSaveFilter.c_str();
+    ofn.lpstrFile = wstrFileToSave.data();
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrTitle = wstrSaveTitle.c_str();
+    ofn.lpstrDefExt = L".csv";
+
+    if (GetSaveFileNameW(&ofn))
+    {
+        auto pos = wstrFileToSave.find(L'\0');
+        if (pos != std::wstring::npos)
+            wstrFileToSave.resize(pos);
+
+        auto hFile = make_unique_handle(CreateFileW(wstrFileToSave.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr));
+        if (hFile.get() == INVALID_HANDLE_VALUE)
+        {
+            ErrorBox(L"Unable to open file.\r\nError: " + std::to_wstring(GetLastError()));
+            return;
+        }
+        try
+        {
+            export_csv(hFile.get(), m_hList);
+        }
+        catch (const export_error& err)
+        {
+            std::string tmpA = err.what();
+            std::wstring tmpW(tmpA.begin(), tmpA.end());
+            ErrorBox(tmpW.c_str());
+        }
+    }
 }

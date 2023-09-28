@@ -30,6 +30,7 @@
 
 #include "unique_resource.h"
 #include "win32_wrappers.h"
+#include "csv_export.h"
 
 #include "resource.h"
 #include "utils.h"

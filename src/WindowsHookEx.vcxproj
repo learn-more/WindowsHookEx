@@ -229,6 +229,7 @@
     <ClCompile Include="CMainWindow.cpp" />
     <ClCompile Include="CHookOutputPage.cpp" />
     <ClCompile Include="AlternateCallbacks.cpp" />
+    <ClCompile Include="csv_export.cpp" />
     <ClCompile Include="Wizard-2020.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -239,6 +240,7 @@
     <ClInclude Include="CMainWindow.h" />
     <ClInclude Include="CPage.h" />
     <ClInclude Include="CHookOutputPage.h" />
+    <ClInclude Include="csv_export.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Wizard-2020.h" />

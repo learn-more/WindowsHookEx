@@ -14,6 +14,12 @@ typedef HRESULT (WINAPI *PGetDpiForMonitor)(HMONITOR hmonitor, int dpiType, UINT
 #define LOAD_LIBRARY_SEARCH_SYSTEM32            0x00000800
 #endif
 
+void
+ErrorBox(const std::wstring& wstrMessage)
+{
+    MessageBoxW(nullptr, wstrMessage.c_str(), wszAppName, MB_ICONERROR);
+}
+
 WORD
 GetWindowDPI(HWND hWnd)
 {

@@ -1,4 +1,4 @@
-//
+﻿//
 // WindowsHookEx - Test the behavior of the api SetWindowsHookEx
 // Copyright (c) 2020 Mark Jansen
 // UI Framework: Wizard-2020 Example from https://building.enlyze.com/posts/writing-win32-apps-like-its-2020-part-1

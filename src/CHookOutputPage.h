@@ -42,5 +42,6 @@ private:
     LRESULT _OnDestroy();
     LRESULT _OnCommand(WPARAM wParam);
     LRESULT _OnSize();
+    void _OnExportCsv();
     static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

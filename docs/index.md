@@ -42,11 +42,13 @@ Additionally, when working on [ReactOS](https://reactos.org) it is a good tool t
     * Hook messages received, with decoded arguments
 * All received events include the process name and Thread ID on which they are received!
 * Show processes where the hook dll is loaded
+* Allows exporting the recorded hooks to CSV [^1]
 * An Atom viewer, showing [Global and User Atoms](https://docs.microsoft.com/en-us/windows/win32/dataxchg/about-atom-tables).
     * Highlight Added Atoms (green)
     * Highlight Removed Atoms (red)
 * Works on Windows XP / Server 2003 and newer
 
+[^1]: New in version 1.8.0.
 
 
 ## Screenshots
@@ -56,7 +58,11 @@ Available options:
 
 
 Hook types:
-  ![Hook types](WindowsHookEx-HookTypes.png)
+![Hook types](WindowsHookEx-HookTypes.png)
+
+
+CSV Export:
+![CSV Export](WindowsHookEx-ExportCSV.png)
 
 
 Atom viewer:

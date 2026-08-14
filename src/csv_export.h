@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <stdexcept>
+#include <string>
+
 class export_error : public std::runtime_error
 {
 public:

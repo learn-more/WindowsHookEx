@@ -1,0 +1,56 @@
+name: MSBuild
+
+# The old appveyor.yml built every commit; this is that half. Releases are release.yml, on tags only.
+# paths-ignore replaces AppVeyor's skip_commits: the GitHub Pages site under docs/ does not affect the binary.
+on:
+  push:
+    branches: ["master"]
+    paths-ignore: ["docs/**", "**/*.html"]
+  pull_request:
+    branches: ["master"]
+    paths-ignore: ["docs/**", "**/*.html"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Pinned, same as release.yml: the v141_xp step below installs into a hard-coded Visual Studio 2022 path, so
+    # windows-latest moving to a newer image breaks it.
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x64]
+    steps:
+      # submodules: recursive for src/scope-guard, which the build includes - AppVeyor did this in its install
+      # step. fetch-depth: 0 for the tags: src/GenVersion.bat runs `git describe --tags` to generate the version
+      # resource, and a shallow clone has nothing to describe against.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      # Unconditional, unlike JobDebug where only the x86 configuration needs it: here all four configurations of
+      # both projects are v141_xp against WindowsTargetPlatformVersion 7.0, x64 included. Neither the toolset nor
+      # the 7.1A SDK is on the image by default; the WinXP component brings both.
+      - name: Add v141_xp tools
+        working-directory: "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\"
+        shell: cmd
+        run: vs_installer.exe modify --quiet --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --add Microsoft.VisualStudio.Component.WinXP --norestart --nocache
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build
+        run: msbuild src\WindowsHookEx.sln /p:Configuration=Release /p:Platform=${{ matrix.arch }} /m /v:m /nologo
+
+      # No signing here, on purpose: pull request builds from forks cannot see secrets, and every signature costs
+      # a login to a certificate meant for artifacts people actually download. See .github/SIGNING.md.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: WindowsHookEx-${{ matrix.arch }}
+          path: |
+            src/bin/*.exe
+            src/bin/*.dll
+            src/bin/*.pdb

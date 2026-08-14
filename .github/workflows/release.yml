@@ -1,0 +1,112 @@
+name: release
+
+# Tag push only. Pushing v0.9.0 builds it and leaves a *draft* release with the archives attached; nothing is
+# published until the draft is released by hand from the GitHub UI.
+#
+# Tags are v-prefixed from here on. Releases up to 0.8.1 were tagged bare, which is why release-notes.ps1 still
+# matches both - see the note there.
+on:
+  push:
+    tags: ['v*']
+
+# The release is created in this repository, so the default GITHUB_TOKEN needs to be able to write it. No PAT.
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # Pinned, same as msbuild.yml: v141_xp comes from a Visual Studio 2022 component that is installed below at a
+    # hard-coded 2022 path. windows-latest moving to a newer image breaks that step.
+    #
+    # One job, not a `platform:` matrix, and that is deliberate: a matrix means one SimplySign login per job, and
+    # a login spends a one-time TOTP code. See .github/SIGNING.md.
+    runs-on: windows-2022
+    steps:
+      # submodules: recursive for src/scope-guard - AppVeyor did this in its install step. fetch-depth: 0 for the
+      # tags, needed twice over: src/GenVersion.bat describes against them for the version resource, and
+      # release-notes.ps1 works out from them what the previous release was.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      # Unconditional, unlike JobDebug where only the x86 configuration needs it: here all four configurations of
+      # both projects are v141_xp against WindowsTargetPlatformVersion 7.0, x64 included. Neither the toolset nor
+      # the 7.1A SDK is on the image by default; the WinXP component brings both.
+      - name: Add v141_xp tools
+        working-directory: "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\"
+        shell: cmd
+        run: vs_installer.exe modify --quiet --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --add Microsoft.VisualStudio.Component.WinXP --norestart --nocache
+
+      - uses: microsoft/setup-msbuild@v3
+
+      - name: Build x86
+        run: msbuild src\WindowsHookEx.sln /p:Configuration=Release /p:Platform=x86 /m /v:m /nologo
+
+      - name: Build x64
+        run: msbuild src\WindowsHookEx.sln /p:Configuration=Release /p:Platform=x64 /m /v:m /nologo
+
+      # Signing is opt-in: without the Certum settings a release still builds, unsigned and labelled as such.
+      # .github/SIGNING.md lists what to store and where - only the first two are secrets, the thumbprint is a
+      # repository variable because a certificate thumbprint is public information.
+      #
+      # Runs after the build but *before* the archives below, because what a user runs is whatever came out of
+      # the zip. All four files in `path:` and none in `embedded-path:`: the DLLs ship next to the executables
+      # rather than being extracted back out of them at runtime, so each one is a download in its own right and
+      # has to count towards the signed/unsigned verdict.
+      #
+      # The outcome is read back off the files rather than inferred from "did the signing step run", and lands in
+      # an annotation, the job summary, the banner that opens release-notes.md, and SIGNING_STATUS /
+      # SIGNING_SUMMARY. A release cannot ship claiming to be signed when it is not.
+      #
+      # description: for HookDll, which has no version resource; the executable keeps the FileDescription in
+      # src/WindowsHookEx.rc2 instead, so that string stays in a single place.
+      - name: Sign release binaries
+        uses: learn-more/certum-signing@v1
+        with:
+          path: |
+            src/bin/WindowsHookEx-x86.exe
+            src/bin/HookDll-x86.dll
+            src/bin/WindowsHookEx-x64.exe
+            src/bin/HookDll-x64.dll
+          description: SetWindowsHookEx test utility
+          notes-path: release-notes.md
+          otp-uri: ${{ secrets.CERTUM_OTP_URI }}
+          username: ${{ secrets.CERTUM_USERNAME }}
+          certificate-sha1: ${{ vars.CERTUM_CERTIFICATE_SHA1 }}
+          timestamp-server: ${{ vars.CERTUM_TIMESTAMP_SERVER }}
+          intermediate-url: ${{ vars.CERTUM_INTERMEDIATE_URL }}
+
+      # One archive per platform, each carrying the executable, the DLL it loads and both PDBs, so a crash in a
+      # released build can still be symbolised. Compress-Archive is given the files themselves rather than a
+      # directory, which is what stores them under bare names - the reason AppVeyor passed 7z absolute paths.
+      - name: Package release archives
+        run: |
+          New-Item -ItemType Directory -Path dist | Out-Null
+          Compress-Archive -DestinationPath dist\WindowsHookEx-x86.zip -Path `
+            src\bin\WindowsHookEx-x86.exe, src\bin\WindowsHookEx-x86.pdb, `
+            src\bin\HookDll-x86.dll, src\bin\HookDll-x86.pdb
+          Compress-Archive -DestinationPath dist\WindowsHookEx-x64.zip -Path `
+            src\bin\WindowsHookEx-x64.exe, src\bin\WindowsHookEx-x64.pdb, `
+            src\bin\HookDll-x64.dll, src\bin\HookDll-x64.pdb
+          Get-ChildItem dist
+
+      # Appends the changelog under the signing banner, so the notes are a starting point to edit rather than an
+      # empty box. AppVeyor put only the signing banner in the release description.
+      - name: Build release notes
+        run: .\.github\scripts\release-notes.ps1 -Tag '${{ github.ref_name }}' -NotesPath release-notes.md
+
+      # --draft so this never publishes on its own: until someone releases it by hand it is visible only to
+      # collaborators, and its assets need auth to download. --verify-tag rather than letting gh create a tag of
+      # its own, so a mistyped ref fails here instead of tagging something. No --generate-notes: --notes-file
+      # already carries the signing banner and the changelog, which the draft is then edited over.
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ github.ref_name }}'
+          $ghArgs = @($tag, '--draft', '--verify-tag', '--title', $tag, '--notes-file', 'release-notes.md')
+          # v0.9.0-rc1 and friends: anything with a suffix after the version is not a final release.
+          if ($tag -match '^v\d+\.\d+\.\d+-') { $ghArgs += '--prerelease' }
+          $assets = @(Get-ChildItem dist -File | ForEach-Object { $_.FullName })
+          gh release create @ghArgs @assets

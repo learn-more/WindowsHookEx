@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <memory>
+#include <string>
+
 template<class T, class U, HWND (U::*m_hWnd)> T*
 InstanceFromWndProc(HWND hWnd, UINT uMsg, LPARAM lParam)
 {
